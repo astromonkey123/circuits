@@ -1,0 +1,108 @@
+body {
+    background-color: hsl(220, 27%, 22%);
+    margin: 0;
+}
+
+.canvas {
+    box-sizing: border-box;
+    position: relative;
+    margin: 10px;
+    border-radius: 10px;
+    margin-bottom: 0;
+    background-color: hsl(220, 27%, 18%);
+    border-style: solid;
+    border-color: black;
+    border-width: 2px;
+    width: 800px;
+    height: 500px;
+}
+
+.button-grid{
+    position: relative;
+    margin: 10px;
+    margin-top: 0px;
+    background-color: hsl(220, 27%, 18%);
+    left: 0;
+    top: 0;
+    width: 800px;
+    height: 50px;
+    border-radius: 10px;
+}
+
+.button {
+    box-sizing: border-box;
+    border-radius: 10px;
+    padding-left: 25px; padding-right: 25px;
+    height: 50px;
+    background-color: rgb(63, 79, 110);
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-style: solid;
+    border-color: black;
+    border-width: 2px;
+    transition: box-shadow 0.4s ease;
+}
+
+.button-left {
+    float: left;
+    margin-right: 5px;
+}
+
+.button-right {
+    float: right;
+    margin-left: 5px;
+}
+
+.button:hover {
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+}
+
+.alert-panel {
+    position: absolute;
+    top: calc(260px - 50px);
+    left: calc(410px - 100px);
+    width: 250px;
+    height: 150px;
+    background-color: hsl(220, 27%, 22%);
+    border-radius: 10px;
+    box-sizing: border-box;
+    border-style: solid;
+    border-color: black;
+    border-width: 2px;
+    text-align: center;
+    color: white;
+    transition: opacity 0.2s ease;
+}
+
+.panel-button-grid {
+    position: absolute;
+    bottom: 0;
+    width: calc(100% - 20px);
+    margin: 10px;
+    background-color: hsl(220, 27%, 18%);
+    display: flex;
+    justify-content: space-between;
+    border-radius: 10px;
+}
+
+.panel-button {
+    background-color: rgb(63, 79, 110);
+    width: 105px;
+    border-radius: 10px;
+    box-sizing: border-box;
+    border-style: solid;
+    border-color: black;
+    border-width: 2px;
+    transition: box-shadow 0.4s ease;
+}
+
+.panel-button:hover {
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+}
+
+.alert {
+    color: white;
+    background-color: rgb(166, 90, 90);
+}

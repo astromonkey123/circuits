@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Circuit Simulator</title>
+    <link rel="stylesheet" href="css/index.css">
+    <script src="js/index.js" defer></script>
+    <script type="module" src="js/canvas.js" defer></script>
+</head>
+
+<body>
+    <canvas class="canvas" id="canvas" width="800" height="500"></canvas>
+    <div class="button-grid">
+        <div class="button button-left" id="addBattery">
+            <h3>Battery</h3>
+        </div>
+        <div class="button button-left" id="addResistor">
+            <h3>Resistor</h3>
+        </div>
+        <div class="button button-left" id="addCapacitor">
+            <h3>Capacitor</h3>
+        </div>
+        <div class="button button-left" id="addInductor">
+            <h3>Inductor</h3>
+        </div>
+        <div class="button button-left" id="addWire">
+            <h3>Wire</h3>
+        </div>
+        <div class="button button-right alert"  onclick="showAlertPanel()">
+            <h3>Clear</h3>
+        </div>
+    </div>
+    <div class="alert-panel" id="alert-panel" hidden="true">
+        <h3>Are you sure you <br> want to clear?</h3>
+        <div class="panel-button-grid">
+            <div class="panel-button" onclick="hideAlertPanel()">
+                <h3>No</h3>
+            </div>
+            <div class="panel-button alert" onclick="hideAlertPanel()" id="clear">
+                <h3>Yes</h3>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
