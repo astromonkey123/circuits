@@ -32,7 +32,7 @@ end
 function simulate(circuit, duration)
     """ Simulate the given circuit for the specified duration """
 
-    circuit_loops = findLoops(circuit)
+    circuit_loops = find_loops(circuit) # Break the circuit into Kirchhoff Loops
     num_loops = length(circuit_loops)
 
     dt = 1e-3 # Simulation time step
@@ -63,7 +63,7 @@ function simulate(circuit, duration)
     display(lines(ts, currents)) # Time vs current line graph
 end
 
-function findLoops(circuit)
+function find_loops(circuit)
     """ Break complex circuits into Kirchhoff Loops """
 
     loops = [[]] # Kirchhoff loops
