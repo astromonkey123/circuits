@@ -1,0 +1,48 @@
+Ok so how can we actually simulate this stuff?
+
+First, let's pick how we want a circuit to be formatted. I think it mases sense
+for a "circuit" object to be a vector for elements in series, and containing
+vectors for elements in parallel. For example, a circuit that has a battery,
+then a resistor, then two resistors in parallel, then another resistor, would
+appear as:
+
+Circuit = [bat, r1, [r2, r3], r4]
+
+Second, let's figure out how we can actually solve this system. It should be
+a method that can find the state of the circuit at any time, not just the
+steady-state conditions.
+
+Maybe first let's break each section into Kirchoff loops, so that we can
+examine each individually. Doing so for this example would yeild:
+
+Loop_1 = [bat, r1, r2, r4]
+Loop_2 = [bat, r1, r3, r4]
+
+Now each of these circuits can be solved entirely independly of each other,
+and then the results added together at the end.
+
+In the case that all the elements are resistors, we are pretty much done
+because we can find the equivalent resistance and then solve. But if
+one of the elements is an inductor or capacitor then we hasve problems.
+
+Maybe the best options is to find the dV contribution from each one, and
+because we know the current has to be the same through all the elements
+we can then solve for the current.
+
+So, for the first loop, we would have
+
+0 = dVb - dVr1 - dVr2 - dVr4
+0 = dVb - IR1 - IR2 - IR4
+
+And then we can interatively solve for I, and likewise for the second loop.
+
+Now consider if our circuit was an LRC circuit.
+
+Circuit = [bat, r, l, c]
+
+Now there are no loops so that makes it easy, and we have
+
+0 = dVb - IR - (dI/dt)L - (I dt)C
+
+At the beginning, dI/dt and I dt are both 0 so they don't contribute any dV.
+On the next time step, we then calculate dI/dt and I dt and use those instead.
