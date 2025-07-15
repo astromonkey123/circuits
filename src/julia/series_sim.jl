@@ -1,7 +1,7 @@
 """
 Script to simulate circuits with batteries, resistors, inductors, and capacitors.
 
-Works for elements in series and in parallel.
+Only works on elements in series.
 
 Prototype for the actual circuit simulation which will be done in JavaScript.
 """
@@ -32,56 +32,30 @@ end
 function simulate(circuit, duration)
     """ Simulate the given circuit for the specified duration """
 
-    circuit_loops = findLoops(circuit)
-    num_loops = length(circuit_loops)
-
     dt = 1e-3 # Simulation time step
-    I_previous = zeros(num_loops) # Currents from the previous time step
-    ∫Idt = zeros(num_loops) # Integrals of currents wrt time
+    I_previous = 0 # Current from the previous time step
+    ∫Idt = 0 # Integral of current wrt time
 
-    # Keep track of time and total current for plotting
+    # Keep track of time and current for plotting
     ts = []
     currents = []
 
     # Loop through time steps
     for t in 0:dt:duration
-        I_total = 0
+        I, ∫Idt, dIdt = circuit_solver(circuit, I_previous, ∫Idt, dt) # Find current, its integral, and its derivative
+        I_previous = I # Store the current for the next time step
 
-        # Calculate the current in each loop
-        for (i, circuit) in enumerate(circuit_loops)
-            I, ∫Idt[i], dIdt = circuit_solver(circuit, I_previous[i], ∫Idt[i], dt) # Find current, its integral, and its derivative
-            I_previous[i] = I # Store the current for the next time step
-
-            I_total += I # Add this loop's current to the total
-        end
+        # println("----- t = $t -----")
+        # println("Integral: $(∫Idt)")
+        # println("Current: $I")
+        # println("Derivative: $(dIdt)")
 
         # Push the time and current to the vectors for plotting
         push!(ts, t)
-        push!(currents, I_total)
+        push!(currents, I)
     end
 
     display(lines(ts, currents)) # Time vs current line graph
-end
-
-function findLoops(circuit)
-    """ Break complex circuits into Kirchhoff Loops """
-
-    loops = [[]] # Kirchhoff loops
-
-    for element in circuit.elements
-        if element isa Vector
-            # Create a new loop with each sub-element for each loop
-            new_loops = [[loop..., sub_element] for loop in loops for sub_element in element]
-        else
-            # Add the element to the end of each loop
-            new_loops = [[loop..., element] for loop in loops]
-        end
-        loops = new_loops
-    end
-
-    circuit_loops = [Circuit(loop) for loop in loops] # Convert the loops into circuits
-
-    return circuit_loops
 end
 
 function circuit_solver(circuit, I_previous, ∫Idt, dt)
@@ -137,12 +111,12 @@ function circuit_solver(circuit, I_previous, ∫Idt, dt)
     return I, ∫Idt, dIdt
 end
 
-""" Example of a circuit with resistors in parallel """
-b1 = Battery(10)
-r1 = Resistor(1)
-r2 = Resistor(2)
-circuit = Circuit([b1, [r1, r2]])
+""" Example of simulating an LRC circuit that oscillates and decays """
+bat = Battery(10)
+r1 = Resistor(0.5)
+c1 = Capacitor(1, 0)
+l1 = Inductor(5)
 
-simulate(circuit, 1)
+circuit = Circuit([bat, l1, r1, c1])
 
-#TODO: Make it so it works with more layers, both parallel and series
+simulate(circuit, 100)
