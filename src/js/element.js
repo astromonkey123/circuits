@@ -2,13 +2,10 @@ import { objects, connections } from './canvas.js';
 import { Connection } from './connection.js';
 
 export class Element {
-    constructor(x, y, type, emf, current, charge) {
+    constructor(x, y, type) {
         this.x = x;
         this.y = y;
         this.type = type;
-        this.emf = emf;
-        this.current = current;
-        this.charge = charge;
         this.width = 100;
         if (type == 'battery') {
             this.priority = 1;
@@ -128,4 +125,39 @@ export class Element {
         }
         ctx.restore();
     }
+}
+
+export class Battery extends Element {
+  constructor(x, y, emf) {
+    super(x, y, 'battery');
+    this.emf = emf;
+  }
+}
+
+export class Wire extends Element {
+  constructor(x, y) {
+    super(x, y, 'wire');
+  }
+}
+
+export class Resistor extends Element {
+  constructor(x, y, resistance) {
+    super(x, y, 'resistor');
+    this.resistance = resistance;
+  }
+}
+
+export class Capacitor extends Element {
+  constructor(x, y, capacitance, initial_charge) {
+    super(x, y, 'capacitor');
+    this.capacitance = capacitance;
+    this.initial_charge = initial_charge;
+  }
+}
+
+export class Inductor extends Element {
+  constructor(x, y, inductance) {
+    super(x, y, 'inductor');
+    this.inductance = inductance;
+  }
 }

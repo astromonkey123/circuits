@@ -1,10 +1,12 @@
 import { Circuit } from './circuit.js';
-import { Element } from './element.js';
+import { Battery, Wire, Resistor, Capacitor, Inductor } from './element.js';
 import { Connection } from './connection.js';
+import { simulate_periodic } from './circuit_sim.js';
 
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
+export let circuits = [];
 export let objects = [];
 export let connections = [];
 let dragging = null;
@@ -13,28 +15,24 @@ let offsetY = 0;
 
 window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('addBattery').addEventListener('click', () => {
-        addObject('battery');
+        let temp = new Battery(350, 250, 10);
     });
     document.getElementById('addResistor').addEventListener('click', () => {
-        addObject('resistor');
+        let temp = new Resistor(350, 250, 10);
     });
     document.getElementById('addCapacitor').addEventListener('click', () => {
-        addObject('capacitor');
+        let temp = new Capacitor(350, 250, 10, 0);
     });
     document.getElementById('addInductor').addEventListener('click', () => {
-        addObject('inductor');
+        let temp = new Inductor(350, 250, 10);
     });
     document.getElementById('addWire').addEventListener('click', () => {
-        addObject('wire');
+        let temp = new Wire(350, 250);
     });
     document.getElementById('clear').addEventListener('click', () => {
         clearCanvas();
     });
 });
-
-function addObject(type) {
-    let new_object = new Element(350, 250, type, 0, 0, 0);
-}
 
 function drawAll() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -93,4 +91,15 @@ canvas.addEventListener('mouseup', () => {
     dragging = null;
 });
 
+function display_info() {
+    if (circuits.length === 0) return;
+
+    let circuit = circuits[0];
+    document.getElementById("current").innerHTML = circuit.I;
+    document.getElementById("integral").innerHTML = circuit.integral_Idt;
+    document.getElementById("derivative").innerHTML = circuit.dIdt;
+}
+
 setInterval(drawAll, 30);
+setInterval(simulate_periodic, 1000);
+setInterval(display_info, 1000);

@@ -59,6 +59,26 @@ body {
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
 }
 
+.info-box {
+    position: absolute;
+    top: 50px;
+    left: 50px;
+    height: 100px;
+    width: 150px;
+    background-color: rgb(63, 79, 110);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-style: solid;
+    border-color: black;
+    border-width: 2px;
+    border-radius: 10px;
+}
+
+.info-box h4 {
+    color: white;
+}
+
 .alert-panel {
     position: absolute;
     top: calc(260px - 50px);
