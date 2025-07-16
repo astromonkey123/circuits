@@ -82,9 +82,9 @@ function simulate_step(circuit) {
     circuit.integral_Idt = integral_Idt;
     circuit.dIdt = dIdt;
 
-    console.log(`Integral: ${integral_Idt}`);
-    console.log(`Current: ${I}`);
-    console.log(`Derivative: ${dIdt}`);
+    // console.log(`Integral: ${integral_Idt}`);
+    // console.log(`Current: ${I}`);
+    // console.log(`Derivative: ${dIdt}`);
 }
 
 function circuit_solver(circuit, I_previous, integral_Idt, dt) {

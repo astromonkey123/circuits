@@ -2,8 +2,10 @@ import { Circuit } from './circuit.js';
 import { Battery, Wire, Resistor, Capacitor, Inductor } from './element.js';
 import { Connection } from './connection.js';
 import { simulate_periodic } from './circuit_sim.js';
+import { graphAll } from './graphing.js';
 
 const canvas = document.getElementById('canvas');
+// const graph = document.getElementById('graph');
 const ctx = canvas.getContext('2d');
 
 export let circuits = [];
@@ -12,6 +14,7 @@ export let connections = [];
 let dragging = null;
 let offsetX = 0;
 let offsetY = 0;
+let offsetRot = 0;
 
 window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('addBattery').addEventListener('click', () => {
@@ -21,7 +24,7 @@ window.addEventListener('DOMContentLoaded', () => {
         let temp = new Resistor(350, 250, 10);
     });
     document.getElementById('addCapacitor').addEventListener('click', () => {
-        let temp = new Capacitor(350, 250, 10, 0);
+        let temp = new Capacitor(350, 250, 0.001, 0);
     });
     document.getElementById('addInductor').addEventListener('click', () => {
         let temp = new Inductor(350, 250, 10);
@@ -43,12 +46,10 @@ function drawAll() {
         connection.draw(ctx);
         connection.checkLinks();
     }
-    for (let connection of connections) {
-        connection.findVoltage();
-    }
 }
 
 function clearCanvas() {
+    circuits = [];
     objects = [];
     connections = [];
     dragging = null;
@@ -71,6 +72,7 @@ canvas.addEventListener('mousedown', (e) => {
                 dragging = object;
                 offsetX = mouseX - dragging.x;
                 offsetY = mouseY - dragging.y;
+                offsetRot = Math.atan2(offsetX, offsetY) + dragging.rotation;
             }
         }
     }
@@ -80,9 +82,15 @@ canvas.addEventListener('mousemove', (e) => {
     if (!dragging) return;
     const rect = canvas.getBoundingClientRect();
     if (dragging instanceof Connection) {
-        dragging.move(e.clientX - rect.left, e.clientY - rect.top)
+        dragging.move(e.clientX - rect.left, e.clientY - rect.top);
     } else {
-        dragging.move(e.clientX - rect.left - offsetX, e.clientY - rect.top - offsetY)
+        if (e.shiftKey) {
+            offsetX = e.clientX - rect.left - dragging.x;
+            offsetY = e.clientY - rect.top - dragging.y;
+            dragging.rotate(-Math.atan2(offsetX, offsetY) +  offsetRot);
+        } else {
+            dragging.move(e.clientX - rect.left - offsetX, e.clientY - rect.top - offsetY);
+        }
     }
     drawAll();
 });
@@ -95,11 +103,12 @@ function display_info() {
     if (circuits.length === 0) return;
 
     let circuit = circuits[0];
-    document.getElementById("current").innerHTML = circuit.I;
-    document.getElementById("integral").innerHTML = circuit.integral_Idt;
-    document.getElementById("derivative").innerHTML = circuit.dIdt;
+    document.getElementById("current").innerHTML = circuit.I.toFixed(3);
+    document.getElementById("integral").innerHTML = circuit.integral_Idt.toFixed(3);
+    document.getElementById("derivative").innerHTML = circuit.dIdt.toFixed(3);
 }
 
 setInterval(drawAll, 30);
-setInterval(simulate_periodic, 1000);
-setInterval(display_info, 1000);
+setInterval(simulate_periodic, 100);
+setInterval(display_info, 100);
+setInterval(graphAll, 100);

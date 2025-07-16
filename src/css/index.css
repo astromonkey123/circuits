@@ -61,8 +61,8 @@ body {
 
 .info-box {
     position: absolute;
-    top: 50px;
-    left: 50px;
+    top: 20px;
+    left: 20px;
     height: 100px;
     width: 150px;
     background-color: rgb(63, 79, 110);
@@ -77,6 +77,22 @@ body {
 
 .info-box h4 {
     color: white;
+}
+
+.graphing-box {
+    position: absolute;
+    top: 20px;
+    left: 180px;
+    height: 100px;
+    width: 615px;
+    background-color: rgb(63, 79, 110);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-style: solid;
+    border-color: black;
+    border-width: 2px;
+    border-radius: 10px;
 }
 
 .alert-panel {

@@ -6,57 +6,49 @@ export class Element {
         this.x = x;
         this.y = y;
         this.type = type;
+        this.rotation = 0;
+        if (this.type == 'wire') this.rotation = 0;
         this.width = 100;
-        if (type == 'battery') {
-            this.priority = 1;
-            this.connection1 = new Connection(x, y, this, 10)
-            this.connection2 = new Connection(x + this.width, y, this, -10)
-        } else if (type == 'wire') {
-            this.priority = 2;
-            this.connection1 = new Connection(x, y, this, 0)
-            this.connection2 = new Connection(x + this.width, y, this, 0)
-        } else if (type == 'resistor') {
-            this.priority = 3;
-            this.connection1 = new Connection(x, y, this, 0)
-            this.connection2 = new Connection(x + this.width, y, this, 0)
-        }  else if (type == 'capacitor') {
-            this.priority = 4;
-            this.connection1 = new Connection(x, y, this, 0)
-            this.connection2 = new Connection(x + this.width, y, this, 0)
-        }  else if (type == 'inductor') {
-            this.priority = 5;
-            this.connection1 = new Connection(x, y, this, 0)
-            this.connection2 = new Connection(x + this.width, y, this, 0)
-        }
+        this.connection1 = new Connection(x - (Math.cos(this.rotation) * this.width/2), y - (Math.sin(this.rotation) * this.width/2), this)
+        this.connection2 = new Connection(x + (Math.cos(this.rotation) * this.width/2), y + (Math.sin(this.rotation) * this.width/2), this)
         this.connection1.sibling = this.connection2;
         this.connection2.sibling = this.connection1;
         objects.push(this);
     }
 
     contains(x, y) {
-        const in_x_bounds = (x > this.x) && (x < this.x + this.width);
-        const in_y_bounds = (y > this.y - 10) && (y < this.y + 10);
-        return in_x_bounds && in_y_bounds;
+        return Math.hypot(x - this.x, y - this.y) < 50;
     }
 
     move(x, y) {
         this.x = x;
         this.y = y;
-        this.connection1.x = this.x;
-        this.connection1.y = this.y;
-        this.connection2.x = this.x + this.width;
-        this.connection2.y = this.y;
+        this.connection1.x = this.x - (Math.cos(this.rotation) * this.width/2);
+        this.connection1.y = this.y - (Math.sin(this.rotation) * this.width/2);
+        this.connection2.x = this.x + (Math.cos(this.rotation) * this.width/2);
+        this.connection2.y = this.y + (Math.sin(this.rotation) * this.width/2);
+    }
+
+    rotate(rotation) {
+        if (this.type == 'wire') return;
+        this.rotation = rotation;
+        this.connection1.x = this.x - (Math.cos(this.rotation) * this.width/2);
+        this.connection1.y = this.y - (Math.sin(this.rotation) * this.width/2);
+        this.connection2.x = this.x + (Math.cos(this.rotation) * this.width/2);
+        this.connection2.y = this.y + (Math.sin(this.rotation) * this.width/2);
     }
 
     draw(ctx) {
         ctx.save();
         ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation);
+        ctx.translate(-this.width/2, 0);
         ctx.fillStyle = 'white';
         ctx.strokeStyle = 'white';
         if (this.type == 'wire') {
             ctx.beginPath();
-            ctx.moveTo(this.connection1.x - this.x, this.connection1.y - this.y);
-            ctx.lineTo(this.connection2.x - this.x, this.connection2.y - this.y);
+            ctx.moveTo(this.connection1.x - this.x + this.width/2, this.connection1.y - this.y);
+            ctx.lineTo(this.connection2.x - this.x + this.width/2, this.connection2.y - this.y);
             ctx.stroke();
         } else if (this.type == 'battery') {
             ctx.beginPath();
