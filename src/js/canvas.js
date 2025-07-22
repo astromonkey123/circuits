@@ -2,7 +2,7 @@ import { Circuit } from './circuit.js';
 import { Battery, Wire, Resistor, Capacitor, Inductor } from './element.js';
 import { Connection } from './connection.js';
 import { simulate_periodic } from './circuit_sim.js';
-import { graphAll } from './graphing.js';
+import { graphAll, resetGraph } from './graphing.js';
 
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
@@ -20,13 +20,13 @@ window.addEventListener('DOMContentLoaded', () => {
         new Battery(canvas.width/2, canvas.height/2, 10);
     });
     document.getElementById('addResistor').addEventListener('click', () => {
-        new Resistor(canvas.width/2, canvas.height/2, 10);
+        new Resistor(canvas.width/2, canvas.height/2, 1);
     });
     document.getElementById('addCapacitor').addEventListener('click', () => {
         new Capacitor(canvas.width/2, canvas.height/2, 0.001, 0);
     });
     document.getElementById('addInductor').addEventListener('click', () => {
-        new Inductor(canvas.width/2, canvas.height/2, 10);
+        new Inductor(canvas.width/2, canvas.height/2, 0.1);
     });
     document.getElementById('addWire').addEventListener('click', () => {
         new Wire(canvas.width/2, canvas.height/2);
@@ -60,6 +60,7 @@ function clearCanvas() {
     objects = [];
     connections = [];
     dragging = null;
+    resetGraph();
 }
 
 canvas.addEventListener('mousedown', (e) => {
@@ -110,13 +111,13 @@ function display_info() {
     if (circuits.length === 0) return;
 
     let circuit = circuits[0];
-    document.getElementById("current").innerHTML = "Current: " + circuit.I.toFixed(3) + "A";
-    document.getElementById("integral").innerHTML = "Integral: " + circuit.integral_Idt.toFixed(3) + "As";
-    document.getElementById("derivative").innerHTML = "Derivative: " + circuit.dIdt.toFixed(3) + "A/s";
-    document.getElementById("time").innerHTML = "Time: " + circuit.elapsed_time.toFixed(3) + "s";
+    document.getElementById("current").innerHTML = "Current: " + "<br>" + circuit.I.toFixed(3) + "A";
+    document.getElementById("integral").innerHTML = "Integral: " + "<br>" + circuit.integral_Idt.toFixed(3) + "As";
+    document.getElementById("derivative").innerHTML = "Derivative: " + "<br>" + circuit.dIdt.toFixed(3) + "A/s";
+    document.getElementById("time").innerHTML = "Time: " + "<br>" + circuit.elapsed_time.toFixed(3) + "s";
 }
 
 setInterval(drawAll, 30);
-setInterval(simulate_periodic, 10);
-setInterval(display_info, 10);
-setInterval(graphAll, 10);
+setInterval(simulate_periodic, 5);
+setInterval(display_info, 5);
+setInterval(graphAll, 5);

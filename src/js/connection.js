@@ -34,6 +34,8 @@ export class Connection {
     }
 
     draw(ctx) {
+        ctx.save();
+        ctx.translate(this.x, this.y);
         if (this.links.length > 0) {
             ctx.fillStyle = 'blue';
             ctx.strokeStyle = 'blue';
@@ -42,7 +44,8 @@ export class Connection {
             ctx.strokeStyle = 'white';
         }
         ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
+        ctx.arc(0, 0, this.radius, 0, Math.PI * 2)
         ctx.fill();
+        ctx.restore();
     }
 }

@@ -6,6 +6,11 @@ const ctx = graph.getContext('2d');
 let currents = [0];
 let times = [0]
 
+export function resetGraph() {
+    currents = [0];
+    times = [0];
+}
+
 export function graphAll() {
     if (circuits.length !== 0) {
         currents.push(circuits[0].I);
@@ -15,12 +20,10 @@ export function graphAll() {
 
     ctx.clearRect(0, 0, graph.width, graph.height);
 
-    // let num_currents = currents.length;
-    // let spacing = graph.width / num_currents;
+    let height_increment = 2;
+    let height_scale = 1 / ( ( Math.ceil(Math.max(...currents) / height_increment) ) * height_increment );
 
-    let height_scale = 1/Math.max(...currents);
-
-    let num_times = 500;
+    let num_times = 1000;
     let spacing = graph.width / num_times;
 
     while (currents.length > num_times) {
@@ -54,6 +57,7 @@ export function graphAll() {
             ctx.fillText(times[x].toFixed(3) + "s", x * spacing + 4, graph.height/2 - 4);
         }
     }
+    ctx.fillText((1/height_scale) + "A", 6, -graph.height/2 + 18);
     ctx.stroke();
 
     ctx.restore();
