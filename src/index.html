@@ -10,7 +10,18 @@
 </head>
 
 <body>
-    <canvas class="canvas" id="canvas" width="800" height="500"></canvas>
+    <canvas class="graph" id="graph" width="880" height="130"></canvas>
+
+    <div class="container">
+        <h3 id="current">Current:</h3>
+        <h3 id="current"></h3>
+        <h3 id="integral">Integral:</h3>
+        <h3 id="derivative">Derivative:</h3>
+        <h3 id="time">Time:</h3>
+    </div>
+
+    <canvas class="canvas" id="canvas" width="620" height="400"></canvas>
+
     <div class="button-grid">
         <div class="button button-left" id="addBattery">
             <h3>Battery</h3>
@@ -27,33 +38,8 @@
         <div class="button button-left" id="addWire">
             <h3>Wire</h3>
         </div>
-        <div class="button button-right alert"  onclick="showAlertPanel()">
-            <h3>Clear</h3>
-        </div>
-    </div>
-    <div class="info-box">
-        <h4>
-            Current: <span id="current"></span>
-            <br>
-            Derivative: <span id="derivative"></span>
-            <br>
-            Integral: <span id="integral"></span>
-        </h4>
-    </div>
-    <div class="graphing-box">
-        <canvas class="graph" id="graph" width="615" height="90">
-
-        </canvas>
-    </div>
-    <div class="alert-panel" id="alert-panel" hidden="true">
-        <h3>Are you sure you <br> want to clear?</h3>
-        <div class="panel-button-grid">
-            <div class="panel-button" onclick="hideAlertPanel()">
-                <h3>No</h3>
-            </div>
-            <div class="panel-button alert" onclick="hideAlertPanel()" id="clear">
-                <h3>Yes</h3>
-            </div>
+        <div class="button button-right alert" id="clearCanvas">
+            <h3 id="clearText">Clear</h3>
         </div>
     </div>
 </body>

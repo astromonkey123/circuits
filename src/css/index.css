@@ -1,43 +1,73 @@
 body {
-    background-color: hsl(220, 27%, 22%);
-    margin: 0;
+    position: relative;
+    width: 900px;
+    background-color: hsl(213, 16%, 24%);
+    margin: auto;
 }
 
-.canvas {
+.graph {
+    position: absolute;
+    top: 10px; left: 10px;
     box-sizing: border-box;
-    position: relative;
-    margin: 10px;
     border-radius: 10px;
-    margin-bottom: 0;
-    background-color: hsl(220, 27%, 18%);
+    background-color: hsl(213, 16%, 29%);
     border-style: solid;
     border-color: black;
     border-width: 2px;
-    width: 800px;
-    height: 500px;
+    width: 880px;
+    height: 130px;
+}
+
+.container {
+    position: absolute;
+    top: 150px; left: 10px;
+    box-sizing: border-box;
+    border-radius: 10px;
+    background-color: hsl(213, 16%, 29%);
+    border-style: solid;
+    border-color: black;
+    border-width: 2px;
+    width: 200px;
+    height: 460px;
+    padding-left: 20px;
+}
+
+.canvas {
+    position: absolute;
+    top: 150px; left: 220px;
+    box-sizing: border-box;
+    border-radius: 10px;
+    background-color: hsl(213, 16%, 29%);
+    border-style: solid;
+    border-color: black;
+    border-width: 2px;
+    width: 670px;
+    height: 400px;
 }
 
 .button-grid{
-    position: relative;
-    margin: 10px;
-    margin-top: 0px;
-    background-color: hsl(220, 27%, 18%);
-    left: 0;
-    top: 0;
-    width: 800px;
+    position: absolute;
+    top: 560px; left: 220px;
+    box-sizing: border-box;
+    background-color: hsl(213, 16%, 29%);
+    width: 670px;
     height: 50px;
     border-radius: 10px;
+    border-style: solid;
+    border-color: black;
+    border-width: 2px;
+    padding: 6px
 }
 
 .button {
-    box-sizing: border-box;
     border-radius: 10px;
-    padding-left: 25px; padding-right: 25px;
-    height: 50px;
-    background-color: rgb(63, 79, 110);
+    padding-left: 15px; padding-right: 15px;
+    height: 34px;
+    background-color: hsl(213, 16%, 39%);
     color: black;
     display: flex;
     align-items: center;
+    box-sizing: border-box;
     justify-content: center;
     border-style: solid;
     border-color: black;
@@ -47,94 +77,15 @@ body {
 
 .button-left {
     float: left;
-    margin-right: 5px;
+    margin-right: 6px;
 }
 
 .button-right {
     float: right;
-    margin-left: 5px;
+    margin-left: 6px;
 }
 
 .button:hover {
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
-}
-
-.info-box {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    height: 100px;
-    width: 150px;
-    background-color: rgb(63, 79, 110);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-style: solid;
-    border-color: black;
-    border-width: 2px;
-    border-radius: 10px;
-}
-
-.info-box h4 {
-    color: white;
-}
-
-.graphing-box {
-    position: absolute;
-    top: 20px;
-    left: 180px;
-    height: 100px;
-    width: 615px;
-    background-color: rgb(63, 79, 110);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-style: solid;
-    border-color: black;
-    border-width: 2px;
-    border-radius: 10px;
-}
-
-.alert-panel {
-    position: absolute;
-    top: calc(260px - 50px);
-    left: calc(410px - 100px);
-    width: 250px;
-    height: 150px;
-    background-color: hsl(220, 27%, 22%);
-    border-radius: 10px;
-    box-sizing: border-box;
-    border-style: solid;
-    border-color: black;
-    border-width: 2px;
-    text-align: center;
-    color: white;
-    transition: opacity 0.2s ease;
-}
-
-.panel-button-grid {
-    position: absolute;
-    bottom: 0;
-    width: calc(100% - 20px);
-    margin: 10px;
-    background-color: hsl(220, 27%, 18%);
-    display: flex;
-    justify-content: space-between;
-    border-radius: 10px;
-}
-
-.panel-button {
-    background-color: rgb(63, 79, 110);
-    width: 105px;
-    border-radius: 10px;
-    box-sizing: border-box;
-    border-style: solid;
-    border-color: black;
-    border-width: 2px;
-    transition: box-shadow 0.4s ease;
-}
-
-.panel-button:hover {
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
 }
 

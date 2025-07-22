@@ -4,5 +4,6 @@ export class Circuit {
         this.I = 0;
         this.integral_Idt = 0;
         this.dIdt = 0;
+        this.elapsed_time = 0;
     }
 }

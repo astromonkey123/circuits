@@ -5,7 +5,6 @@ import { simulate_periodic } from './circuit_sim.js';
 import { graphAll } from './graphing.js';
 
 const canvas = document.getElementById('canvas');
-// const graph = document.getElementById('graph');
 const ctx = canvas.getContext('2d');
 
 export let circuits = [];
@@ -18,22 +17,30 @@ let offsetRot = 0;
 
 window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('addBattery').addEventListener('click', () => {
-        let temp = new Battery(350, 250, 10);
+        new Battery(canvas.width/2, canvas.height/2, 10);
     });
     document.getElementById('addResistor').addEventListener('click', () => {
-        let temp = new Resistor(350, 250, 10);
+        new Resistor(canvas.width/2, canvas.height/2, 10);
     });
     document.getElementById('addCapacitor').addEventListener('click', () => {
-        let temp = new Capacitor(350, 250, 0.001, 0);
+        new Capacitor(canvas.width/2, canvas.height/2, 0.001, 0);
     });
     document.getElementById('addInductor').addEventListener('click', () => {
-        let temp = new Inductor(350, 250, 10);
+        new Inductor(canvas.width/2, canvas.height/2, 10);
     });
     document.getElementById('addWire').addEventListener('click', () => {
-        let temp = new Wire(350, 250);
+        new Wire(canvas.width/2, canvas.height/2);
     });
-    document.getElementById('clear').addEventListener('click', () => {
-        clearCanvas();
+    document.getElementById('clearCanvas').addEventListener('click', () => {
+        const clear_text = document.getElementById('clearText');
+
+        if (clear_text.innerHTML === "Clear") {
+            clear_text.innerHTML = "Confirm?"
+            setTimeout(() => {clear_text.innerHTML = "Clear"}, 2000); // Cancel after 2000ms
+        } else if (clear_text.innerHTML === "Confirm?") {
+            clear_text.innerHTML = "Clear"
+            clearCanvas();
+        }
     });
 });
 
@@ -103,12 +110,13 @@ function display_info() {
     if (circuits.length === 0) return;
 
     let circuit = circuits[0];
-    document.getElementById("current").innerHTML = circuit.I.toFixed(3);
-    document.getElementById("integral").innerHTML = circuit.integral_Idt.toFixed(3);
-    document.getElementById("derivative").innerHTML = circuit.dIdt.toFixed(3);
+    document.getElementById("current").innerHTML = "Current: " + circuit.I.toFixed(3) + "A";
+    document.getElementById("integral").innerHTML = "Integral: " + circuit.integral_Idt.toFixed(3) + "As";
+    document.getElementById("derivative").innerHTML = "Derivative: " + circuit.dIdt.toFixed(3) + "A/s";
+    document.getElementById("time").innerHTML = "Time: " + circuit.elapsed_time.toFixed(3) + "s";
 }
 
 setInterval(drawAll, 30);
-setInterval(simulate_periodic, 100);
-setInterval(display_info, 100);
-setInterval(graphAll, 100);
+setInterval(simulate_periodic, 10);
+setInterval(display_info, 10);
+setInterval(graphAll, 10);
