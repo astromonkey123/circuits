@@ -77,7 +77,7 @@ function simulate_step(circuit) {
 
     const dt = 1e-3; // Simulation time step
 
-    circuit.elapsed_time = (Math.round(circuit.elapsed_time / dt) * dt) + dt;
+    circuit.elapsed_time = ( Math.round( circuit.elapsed_time / dt ) + 1 ) * dt;
 
     let [I, integral_Idt, dIdt] = circuit_solver(circuit, circuit.I, circuit.integral_Idt, dt); // Find current, its integral, and its derivative
     circuit.I = I; // Store the current for the next time step

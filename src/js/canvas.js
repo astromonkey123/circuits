@@ -30,17 +30,53 @@ window.addEventListener('DOMContentLoaded', () => {
         new Inductor(canvas.width/2, canvas.height/2 - 50, 1);
     });
     document.getElementById('addWire').addEventListener('click', () => {
-        new Wire(canvas.width/2, canvas.height/2 - 100);
+        new Wire(canvas.width/2 - 50, canvas.height/2 - 100, canvas.width/2 + 50, canvas.height/2 - 100);
+    });
+    document.getElementById('addRC').addEventListener('click', () => {
+        new Battery(canvas.width/2, canvas.height/2 + 50, 10);
+        new Resistor(canvas.width/2 + 50, canvas.height/2 - 50, 1);
+        new Capacitor(canvas.width/2 - 50, canvas.height/2 - 50, 0.5, 0);
+        new Wire(canvas.width/2 - 100, canvas.height/2 - 50, canvas.width/2 - 100, canvas.height/2 + 50);
+        new Wire(canvas.width/2 + 100, canvas.height/2 - 50, canvas.width/2 + 100, canvas.height/2 + 50);
+        new Wire(canvas.width/2 - 100, canvas.height/2 + 50, canvas.width/2 - 50, canvas.height/2 + 50);
+        new Wire(canvas.width/2 + 100, canvas.height/2 + 50, canvas.width/2 + 50, canvas.height/2 + 50);
+    });
+    document.getElementById('addRL').addEventListener('click', () => {
+        new Battery(canvas.width/2, canvas.height/2 + 50, 10);
+        new Resistor(canvas.width/2 + 50, canvas.height/2 - 50, 1);
+        new Inductor(canvas.width/2 - 50, canvas.height/2 - 50, 0.5);
+        new Wire(canvas.width/2 - 100, canvas.height/2 - 50, canvas.width/2 - 100, canvas.height/2 + 50);
+        new Wire(canvas.width/2 + 100, canvas.height/2 - 50, canvas.width/2 + 100, canvas.height/2 + 50);
+        new Wire(canvas.width/2 - 100, canvas.height/2 + 50, canvas.width/2 - 50, canvas.height/2 + 50);
+        new Wire(canvas.width/2 + 100, canvas.height/2 + 50, canvas.width/2 + 50, canvas.height/2 + 50);
+    });
+    document.getElementById('addRLC').addEventListener('click', () => {
+        new Battery(canvas.width/2, canvas.height/2 + 50, 10);
+        new Resistor(canvas.width/2 + 100, canvas.height/2 - 50, 1);
+        new Inductor(canvas.width/2, canvas.height/2 - 50, 0.5);
+        new Capacitor(canvas.width/2 - 100, canvas.height/2 - 50, 0.01, 0);
+        new Wire(canvas.width/2 - 150, canvas.height/2 - 50, canvas.width/2 - 150, canvas.height/2 + 50);
+        new Wire(canvas.width/2 + 150, canvas.height/2 - 50, canvas.width/2 + 150, canvas.height/2 + 50);
+        new Wire(canvas.width/2 - 50, canvas.height/2 + 50, canvas.width/2 - 150, canvas.height/2 + 50);
+        new Wire(canvas.width/2 + 50, canvas.height/2 + 50, canvas.width/2 + 150, canvas.height/2 + 50);
     });
     document.getElementById('clearCanvas').addEventListener('click', () => {
         const clear_text = document.getElementById('clearText');
+        const slider_cover = document.getElementById('slider-cover');
 
         if (clear_text.innerHTML === "Clear") {
             clear_text.innerHTML = "Confirm?"
-            setTimeout(() => {clear_text.innerHTML = "Clear"}, 2000); // Cancel after 2000ms
+            slider_cover.style.width = "80%";
+            setTimeout(() => {
+                clear_text.innerHTML = "Clear";
+                slider_cover.style.width = "85%";
+            }, 2000); // Cancel after 2000ms
+
         } else if (clear_text.innerHTML === "Confirm?") {
             clear_text.innerHTML = "Clear"
+            slider_cover.style.width = "85%";
             clearCanvas();
+
         }
     });
 });

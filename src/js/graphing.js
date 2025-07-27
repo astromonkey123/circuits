@@ -15,18 +15,16 @@ export function graphAll() {
     if (circuits.length !== 0) {
         currents.push(circuits[0].I);
         times.push(circuits[0].elapsed_time);
-
     }
 
     ctx.clearRect(0, 0, graph.width, graph.height);
 
     let height_increment = 2;
-    let height_scale = 1 / ( ( Math.ceil(Math.max(...currents) / height_increment) ) * height_increment );
-
+    let height_scale = getHeightScale(currents, height_increment);
     let num_times = 1000;
     let spacing = graph.width / num_times;
 
-    while (currents.length > num_times) {
+    while (currents.length > num_times * ( 7/8 )) {
         currents.shift();
         times.shift();
     }
@@ -57,9 +55,24 @@ export function graphAll() {
             ctx.fillText(times[x].toFixed(3) + "s", x * spacing + 4, graph.height/2 - 4);
         }
     }
-    ctx.fillText((1/height_scale) + "A", 6, -graph.height/2 + 18);
-    ctx.stroke();
 
+    let max_current = 1 / height_scale;
+    let display_current = "";
+
+    if (1/height_scale == 0) {
+        display_current = "0A";
+    } else if (1 / height_scale >= 1) {
+        display_current = max_current + "A";
+    } else if (1 / height_scale >= 1e-3) {
+        display_current = (1000 * max_current) + "mA"
+    } else {
+        const scaling = ( 1 / (height_scale *  (Math.pow(10, Math.floor( Math.log10( 1 / height_scale ) ) ) ) ) ).toFixed(3)
+        const exponential = Math.floor( Math.log10( 1 / height_scale ) );
+        display_current = scaling + "e" + exponential + "A";
+    }
+
+    ctx.fillText( display_current, 6, -graph.height/2 + 18 );
+    ctx.stroke();
     ctx.restore();
 }
 
@@ -75,4 +88,16 @@ function draw_grid() {
         ctx.stroke();
     }
     ctx.restore();
+}
+
+function getHeightScale(currents, increment) {
+    let max_current = Math.max( ...currents );
+    let min_current = Math.min( ...currents );
+    let limit = Math.max( Math.abs(max_current), Math.abs(min_current) );
+    
+    if (limit < increment) {
+        return 1 / ( Math.pow(2, Math.ceil( Math.log2( limit ) ) ) );
+    } else {
+        return 1 / ( Math.ceil( limit / increment ) * increment );
+    }
 }

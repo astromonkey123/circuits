@@ -7,7 +7,6 @@ export class Element {
         this.y = y;
         this.type = type;
         this.rotation = 0;
-        if (this.type == 'wire') this.rotation = 0;
         this.width = 100;
         this.connection1 = new Connection(x - (Math.cos(this.rotation) * this.width/2), y - (Math.sin(this.rotation) * this.width/2), this)
         this.connection2 = new Connection(x + (Math.cos(this.rotation) * this.width/2), y + (Math.sin(this.rotation) * this.width/2), this)
@@ -140,8 +139,10 @@ export class Battery extends Element {
 }
 
 export class Wire extends Element {
-  constructor(x, y) {
-    super(x, y, 'wire');
+  constructor(x1, y1, x2, y2) {
+    super(x1, y1, 'wire');
+    this.connection1.move(x1, y1);
+    this.connection2.move(x2, y2);
   }
 }
 
