@@ -31,6 +31,21 @@ window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('addWire').addEventListener('click', () => {
         new Wire(canvas.width/2 - 50, canvas.height/2 - 100, canvas.width/2 + 50, canvas.height/2 - 100);
     });
+    document.getElementById('addSeries').addEventListener('click', () => {
+        new Battery(canvas.width/2, canvas.height/2 + 50, 10);
+        new Resistor(canvas.width/2, canvas.height/2 - 50, 1);
+        new Wire(canvas.width/2 - 50, canvas.height/2 - 50, canvas.width/2 - 50, canvas.height/2 + 50);
+        new Wire(canvas.width/2 + 50, canvas.height/2 - 50, canvas.width/2 + 50, canvas.height/2 + 50);
+    });
+    document.getElementById('addParallel').addEventListener('click', () => {
+        new Battery(canvas.width/2, canvas.height/2 + 100, 10);
+        new Resistor(canvas.width/2, canvas.height/2, 1);
+        new Resistor(canvas.width/2, canvas.height/2 - 150, 1);
+        new Wire(canvas.width/2 - 50, canvas.height/2 + 100, canvas.width/2 - 50, canvas.height/2);
+        new Wire(canvas.width/2 + 50, canvas.height/2 + 100, canvas.width/2 + 50, canvas.height/2);
+        new Wire(canvas.width/2 - 50, canvas.height/2 - 100, canvas.width/2 - 50, canvas.height/2);
+        new Wire(canvas.width/2 + 50, canvas.height/2 - 100, canvas.width/2 + 50, canvas.height/2);
+    });
     document.getElementById('addRC').addEventListener('click', () => {
         new Battery(canvas.width/2, canvas.height/2 + 50, 10);
         new Resistor(canvas.width/2 + 50, canvas.height/2 - 50, 1);
