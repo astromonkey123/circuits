@@ -7,8 +7,8 @@ export class Connection {
         this.y = y;
         this.parent = parent;
         this.sibling;
-        this.links = [];
         this.radius = 7;
+        this.links = [];
         connections.push(this);
     }
 
@@ -36,9 +36,9 @@ export class Connection {
     draw(ctx) {
         ctx.save();
         ctx.translate(this.x, this.y);
-        if (this.links.length > 0) {
-            ctx.fillStyle = 'blue';
-            ctx.strokeStyle = 'blue';
+        if (this.links.length > 1) {
+            ctx.fillStyle = 'green';
+            ctx.strokeStyle = 'green';
         } else {
             ctx.fillStyle = 'white';
             ctx.strokeStyle = 'white';

@@ -1,4 +1,4 @@
-import { circuits, objects, connections } from './canvas.js';
+import { canvas_circuits, objects, connections } from './canvas.js';
 
 const graph = document.getElementById('graph');
 const ctx = graph.getContext('2d');
@@ -12,9 +12,9 @@ export function resetGraph() {
 }
 
 export function graphAll() {
-    if (circuits.length !== 0) {
-        currents.push(circuits[0].I);
-        times.push(circuits[0].elapsed_time);
+    if (canvas_circuits.length !== 0) {
+        currents.push(canvas_circuits[0].I);
+        times.push(canvas_circuits[0].elapsed_time);
     }
 
     ctx.clearRect(0, 0, graph.width, graph.height);

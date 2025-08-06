@@ -1,13 +1,13 @@
 import { Circuit } from './circuit.js';
 import { Battery, Wire, Resistor, Capacitor, Inductor } from './element.js';
 import { Connection } from './connection.js';
-import { simulate_periodic } from './circuit_sim.js';
+import { sim_circuits, simulate_periodic } from './circuit_sim.js';
 import { graphAll, resetGraph } from './graphing.js';
 
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
-export let circuits = [];
+export let canvas_circuits = [];
 export let objects = [];
 export let connections = [];
 let edit_object = null;
@@ -85,6 +85,7 @@ function drawAll() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     for (let obj of objects) {
         obj.draw(ctx);
+        // console.log(obj);
     }
     for (let connection of connections) {
         connection.draw(ctx);
@@ -93,7 +94,7 @@ function drawAll() {
 }
 
 function clearCanvas() {
-    circuits = [];
+    canvas_circuits = [];
     objects = [];
     connections = [];
     dragging = null;
@@ -163,12 +164,12 @@ canvas.addEventListener('mouseup', () => {
 });
 
 function display_info() {
-    if (circuits.length === 0) return;
+    if (canvas_circuits.length === 0) return;
 
-    let circuit = circuits[0];
-    document.getElementById("current").innerHTML = "Current: " + "<br>" + circuit.I.toFixed(3) + "A";
-    document.getElementById("integral").innerHTML = "Integral: " + "<br>" + circuit.integral_Idt.toFixed(3) + "As";
-    document.getElementById("derivative").innerHTML = "Derivative: " + "<br>" + circuit.dIdt.toFixed(3) + "A/s";
+    let circuit = canvas_circuits[0];
+    document.getElementById("current").innerHTML = "Current: " + "<br>" + circuit.current.toFixed(3) + "A";
+    document.getElementById("integral").innerHTML = "Integral: " + "<br>" + circuit.current_idt.toFixed(3) + "As";
+    document.getElementById("derivative").innerHTML = "Derivative: " + "<br>" + circuit.current_ddt.toFixed(3) + "A/s";
     document.getElementById("time").innerHTML = "Time: " + "<br>" + circuit.elapsed_time.toFixed(3) + "s";
 }
 
@@ -224,7 +225,11 @@ cancel_button.addEventListener('click', () => {
     input_box.style.visibility = "hidden";
 });
 
-setInterval(drawAll, 30);
-setInterval(simulate_periodic, 5);
-setInterval(display_info, 5);
-setInterval(graphAll, 5);
+setInterval(drawAll, 1000);
+setInterval(() => {
+    simulate_periodic();
+    canvas_circuits = sim_circuits;
+    console.log(canvas_circuits);
+}, 1000);
+setInterval(display_info, 1000);
+setInterval(graphAll, 1000);

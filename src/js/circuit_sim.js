@@ -4,160 +4,214 @@ Script to simulate circuits with batteries, resistors, inductors, and capacitors
 Currently only works for circuits in series and with batteries.
 */
 
-import { circuits, objects, connections } from './canvas.js';
+import { canvas_circuits, objects, connections } from './canvas.js';
 import { Battery, Wire, Resistor, Capacitor, Inductor } from './element.js';
 import { Circuit } from './circuit.js';
 
-export function simulate_periodic() {
-    let available_objects = []; // Objects not already in a circuit
+export let sim_circuits = [];
+const dt = 1e-2
 
-    // Check if an object is not already contained in a circuit
-    for (let object of objects) {
-        let free_object = true;
-        for (let circuit of circuits) {
-            if (circuit.elements.includes(object)) {
-                free_object = false;
+export function simulate_periodic() {
+    sim_circuits = canvas_circuits;
+
+    let found_circuits = find_circuits(objects);
+
+    let revised_circuits = filter_circuits(sim_circuits, found_circuits)
+
+    sim_circuits = revised_circuits;
+
+    console.log(revised_circuits);
+
+    console.log(sim_circuits);
+
+    // let previous_currents = [];
+    // let previous_integrals = [];
+    // for (let circuit of circuits) {
+    //     previous_currents.push(circuit.current);
+    //     previous_integrals.push(circuit.current_idt);
+    // }
+
+    // // Recalculate current five times for accuracy
+    // for (let n = 1; n < 5; n++) {
+    //     for (let i = 0; i < circuits.length; i++) {
+    //         let circuit = circuits[i];   
+    //         let current = step_sim(circuit);
+
+    //         circuit.current = current;
+    //         circuit.current_ddt = (current - previous_currents[i]) / dt;
+    //         circuit.current_idt = previous_integrals[i] + ( current * dt );
+    //         circuit.elapsed_time = circuits[i].elapsed_time + dt;
+    //     }
+    // }
+
+    // for (let object of objects) {
+    //     step_object(object);
+    // }
+}
+
+function filter_circuits(existing_circuits, found_circuits) {
+    if (existing_circuits.length === 0) {
+        return found_circuits;
+    }
+
+    let revised_circuits = [];
+    let new_circuits = [];
+
+    for (let existing_circuit of existing_circuits) {
+        let discovered = false; // Has the circuit been discovered in the last check?
+
+        for (let found_circuit of found_circuits) {
+            let already_exists = false; // Does the found circuit already exist?
+
+            if (check_equality(existing_circuit.elements, found_circuit.elements)) {
+                discovered = true;
+                already_exists = true;
+            }
+
+            // If it doesn't already exist, add it to the new list of circuits
+            if (!already_exists) {
+                new_circuits.push(discovered_circuit);
             }
         }
 
-        if (free_object) available_objects.push(object); // If not, add it to the array of available objects
+        // If it has been discovered, add it to the new list of circuits
+        if (discovered) {
+            revised_circuits.push(existing_circuit)
+        }
     }
 
-    circuits.push(...find_circuits(available_objects)); // Add the circuits made of available objects to the array of existing circuits
+    revised_circuits.push(...new_circuits);
 
-    for (let circuit of circuits) {
-        simulate_step(circuit);
-    }
+    return revised_circuits
+}
+                         
+function check_equality(loop1, loop2) {
+    const check_containment = (loop1, loop2) => {
+        for (let element of loop1) {
+            if (!loop2.includes(element)) { return false; }
+        }
+
+        return true;
+    };
+
+    return check_containment(loop1, loop2) && check_containment(loop2, loop1);
 }
 
 function find_circuits(objects) {
+    let loops = [];
+
+    console.log("----- finding circuits -----");
+
+    for (let start_object of objects) {        
+        let acting_loop = find_loop([start_object], start_object.connection1, 0);
+
+        if (acting_loop === null) { continue; }
+
+        let is_unique = true;
+        for (let loop of loops) {
+            if (check_equality(acting_loop, loop)) { is_unique = false; }
+        }
+
+        if (is_unique) { loops.push(acting_loop) }
+    }
+
+    // Convert loops to circuits
     let circuits = [];
 
-    for (let object of objects) {
-        if (object.type != 'battery') break; // If the object is not a battery we can exit
-
-        // Start at one connection and end when we get to the other
-        const start_node = object.connection1;
-        const end_node = object.connection2;
-
-        let circuit_elements = []; // The elements in the circuit
-        let current_node = start_node; // Current node we are looping on
-        let complete_circuit = false; // If we reached the end_node
-
-        while (true) {
-            if (current_node.links.length === 0) break; // If there are no more links we can stop
-
-            if (circuit_elements.length > 100) break; // Kill it if the circuit gets over 100 elements long
-
-            circuit_elements.push(current_node.parent); // Add the current_node's parent to the list of elements in the circuit
-
-            let next_node = current_node.links[0]; // Get the next_node as the first element in the current_node's links
-            
-            // If we reach the end we can stop
-            if (next_node == end_node) {
-                complete_circuit = true;
-                break;
-            }; 
-
-            if (next_node.parent.connection1 == next_node) {
-                // If it's the first connection, hop over to the second
-                current_node = next_node.parent.connection2;
-            } else if (next_node.parent.connection2 == next_node) {
-                // If it's the second connection, hop over to the first
-                current_node = next_node.parent.connection1;
-            }
-        }
-        if (complete_circuit) circuits.push(new Circuit(circuit_elements));
-    }
-    return circuits
-}
-
-function simulate_step(circuit) {
-    // Simulate the given circuit for one time step
-
-    const dt = 1e-3; // Simulation time step
-
-    circuit.elapsed_time = ( Math.round( circuit.elapsed_time / dt ) + 1 ) * dt;
-
-    let [I, integral_Idt, dIdt] = circuit_solver(circuit, circuit.I, circuit.integral_Idt, dt); // Find current, its integral, and its derivative
-    circuit.I = I; // Store the current for the next time step
-    circuit.integral_Idt = integral_Idt;
-    circuit.dIdt = dIdt;
-
-    for (let element of circuit.elements) {
-        if (element.type == 'resistor') {
-            element.delta_V = circuit.I * element.resistance;
-        } else if (element.type == 'capacitor') {
-            element.stored_charge += circuit.I * dt;
-            element.delta_V = element.stored_charge / element.capacitance;
-        } else if (element.type == 'inductor') {
-            element.delta_V = circuit.dIdt * element.inductance;
+    for (let loop of loops) {
+        let circuit = new Circuit(loop);
+        circuits.push(circuit);
+        for (let element of loop) {
+            element.circuits.push(circuit);
         }
     }
 
-    // console.log(`Integral: ${integral_Idt}`);
-    // console.log(`Current: ${I}`);
-    // console.log(`Derivative: ${dIdt}`);
+    return circuits;
 }
 
-function circuit_solver(circuit, I_previous, integral_Idt, dt) {
-    /*
-    Solve the given circuit based on its elements and its state
-    
-    Operates on Kirchhoff's Law, i.e. ΔV around a closed loop must be 0.
-    */
+function find_loop(loop, current_node, iter) {
+    if (iter > 10) { return null; } // Prevent recursion overflow
 
-    let ΔV_total = []; // Contributions to the voltage around the loop
+    if (current_node.links.length === 0) { return null; } // If there are no more links, there is no complete loop
 
-    // Find the voltage contribution from each element as a function of current, its integral, and its derivative
-    for (let element of circuit.elements) {
+    // If the current node is linked to the first element's other connection
+    if (current_node.links.includes(loop[0].connection2)) {
+        return loop;
+    }
+
+    // Follow the first link and hop to its sibling
+    const next_node = current_node.links[0].sibling;
+    return find_loop([...loop, next_node.parent], next_node, iter + 1);
+}
+
+function step_sim(circuit) {
+    let delta_v_functions = [];
+
+    for (let element in circuit.elements) {
         if (element.type == 'battery') {
-            // Battery -> dV is constant: the EMF of the battery
-            ΔV_total.push( (I, integral_Idt, dIdt) => element.emf );
-
+            delta_v_functions.push(current => element.emf);
         } else if (element.type == 'resistor') {
-            // Resistor -> dV is proportional to current by Ohm's Law: ΔV = I * R
-            ΔV_total.push( (I, integral_Idt, dIdt) => -(I * element.resistance) );
+            let other_currents = 0;
 
-        } else if (element.type == 'capacitor') {
-            // Capacitor -> dV is proportional to the charge stored: ΔV = ∫ I dt / C
-            ΔV_total.push( (I, integral_Idt, dIdt) => -(((I * dt) + element.stored_charge) / element.capacitance) );
+            for (let other_circuit of element.circuits) {
+                if (circuit == other_circuit) { continue }
+                other_currents += other_circuit.current;
+            }
 
+            delta_v_functions.push(current => -(other_currents + current) * element.resistance);
         } else if (element.type == 'inductor') {
-            // Inductor -> dV is proportional to the derivative of current by Faraday's Law: ΔV = L * dIdt
-            ΔV_total.push( (I, integral_Idt, dIdt) => -(dIdt * element.inductance) );
+            let other_derivatives = 0;
 
+            for (let other_circuit of element.circuits) {
+                if (circuit == other_circuit) { continue }
+                other_derivatives += other_circuit.current_ddt;
+            }
+
+            delta_v_functions.push(current => -( other_derivatives + ( (current - circuit.current) / dt ) ) * element.inductance);
+        } else if (element.type == 'capacitor') {
+            let other_integrals = 0;
+
+            for (let other_circuit of element.circuits) {
+                if (circuit == other_circuit) { continue }
+                other_integrals += other_circuit.current_idt;
+            }
+
+            delta_v_functions.push(current => -( other_integrals + ( current * dt )) / element.capacitance);
         }
     }
 
-    // TODO: I'm pretty sure dI/dt in the voltage calculation below is always 0, but I
-    // get the expected graphical results so I'm not really sure how this is working.
-    // However, like all good programmers, I'll gladly follow the "if it ain't broken,
-    // don't fix it" line of thought.
+    function delta_v(current) {
+        let total_delta_v = 0;
+        for (let delta_v_function of delta_v_functions) {
+            total_delta_v += delta_v_function(current);
+        }
+        return total_delta_v;
+    }
+    const slope = (delta_v(1) - delta_v(0));
+    const current = delta_v(0) / -slope;
 
-    let I = 0;
+    return current
+}
 
-    // Sum up the voltage contributions from each element
-    function ΔV(I) {
-        let sum = 0;
+function step_object(element) {
+    if (element.circuits.length == 0) { return null }
 
-        for (let ΔV_element of ΔV_total) {
-            // console.log(ΔV_element(0, 0, 0));
-            sum += ΔV_element(I, integral_Idt + I * dt, (I - I_previous) / dt);
+    if (element.type == 'resistor') {
+        element.current = 0;
+        for (let circuit in element.circuits) {
+            element.current += circuit.current;
         }
 
-        return sum;
+    } else if (element.type == 'inductor') {
+        element.current_ddt = 0;
+        for (let circuit in element.circuits) {
+            element.current_ddt += circuit.current_ddt;
+        }
+
+    } else if (element.type == 'capacitor') {
+        element.current_idt = 0;
+        for (let circuit in element.circuits) {
+            element.current_idt += circuit.current_idt;
+        }
     }
-
-    // Estimate the current (similar to Newton's Method)
-    let slope = ΔV(1) - ΔV(0);
-    I = ( -ΔV(0)/slope );
-
-    // Ideally dV(I) = 0, but I've been getting dV(I) <= 1e-12 which is a more
-    // than small enough error for it not to matter to me
-
-    integral_Idt += I * dt; // Find the integral of current
-    let dIdt = (I - I_previous) / dt; // Find the derivative of current
-
-    return [I, integral_Idt, dIdt];
 }
