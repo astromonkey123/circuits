@@ -35,9 +35,9 @@ export class Connection {
     draw(ctx) {
         ctx.save();
         ctx.translate(this.x, this.y);
-        if (this.links.length > 1) {
-            ctx.fillStyle = 'green';
-            ctx.strokeStyle = 'green';
+        if (this.links.length > 0) {
+            ctx.fillStyle = 'blue';
+            ctx.strokeStyle = 'blue';
         } else {
             ctx.fillStyle = 'white';
             ctx.strokeStyle = 'white';
