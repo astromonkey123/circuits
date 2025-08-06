@@ -17,6 +17,16 @@ export function simulate_periodic() {
 
     container.circuits = revised_circuits;
 
+    for (let element of container.objects) {
+        element.circuits = [];
+    }
+
+    for (let circuit of container.circuits) {
+        for (let element of circuit.elements) {
+            element.circuits.push(circuit);
+        }
+    }
+
     let previous_currents = [];
     let previous_integrals = [];
     for (let circuit of container.circuits) {
@@ -66,7 +76,7 @@ function filter_circuits(existing_circuits, found_circuits) {
 
             // If it doesn't already exist, add it to the new list of circuits
             if (!already_exists) {
-                new_circuits.push(discovered_circuit);
+                new_circuits.push(found_circuit);
             }
         }
 
@@ -113,11 +123,7 @@ function find_circuits(objects) {
     let circuits = [];
 
     for (let loop of loops) {
-        let circuit = new Circuit(loop);
-        circuits.push(circuit);
-        for (let element of loop) {
-            element.circuits.push(circuit);
-        }
+        circuits.push(new Circuit(loop));
     }
 
     return circuits;
@@ -163,14 +169,7 @@ function step_sim(circuit) {
 
             delta_v_functions.push(current => -( other_derivatives + ( (current - circuit.current) / dt ) ) * element.inductance);
         } else if (element.type == 'capacitor') {
-            let other_integrals = 0;
-
-            for (let other_circuit of element.circuits) {
-                if (circuit == other_circuit) { continue }
-                other_integrals += other_circuit.current_idt;
-            }
-
-            delta_v_functions.push(current => -(other_integrals + circuit.current_idt) / element.capacitance);
+            delta_v_functions.push(current => -(element.current_idt + (circuit.current * dt)) / element.capacitance);
         }
     }
 
@@ -188,14 +187,16 @@ function step_sim(circuit) {
 }
 
 function step_object(element) {
-    // if (element.circuits.length == 0) {
-    //     if (element.type == 'resistor') {
-    //         element.current = 0;
-    //     } else if (element.type == 'inductor') {
-    //         element.current_ddt = 0;
-    //     }
-    //     return null;
-    // }
+    if (element.circuits.length == 0) {
+        if (element.type == 'resistor') {
+            element.current = 0;
+        } else if (element.type == 'inductor') {
+            element.current_ddt = 0;
+        } else if (element.type == 'capacitor') {
+            element.current_idt = element.current_idt;
+        }
+        return null;
+    }
 
     if (element.type == 'resistor') {
         element.current = 0;
@@ -210,9 +211,9 @@ function step_object(element) {
         }
 
     } else if (element.type == 'capacitor') {
-        element.current_idt = 0;
+        // element.current_idt = 0;
         for (let circuit of element.circuits) {
-            element.current_idt += circuit.current_idt;
+            element.current_idt += circuit.current * dt;
         }
     }
 }
