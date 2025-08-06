@@ -4,25 +4,20 @@ Script to simulate circuits with batteries, resistors, inductors, and capacitors
 Currently only works for circuits in series and with batteries.
 */
 
-import { canvas_circuits, objects, connections } from './canvas.js';
+import { container } from './app.js';
 import { Battery, Wire, Resistor, Capacitor, Inductor } from './element.js';
 import { Circuit } from './circuit.js';
 
-export let sim_circuits = [];
 const dt = 1e-2
 
 export function simulate_periodic() {
-    sim_circuits = canvas_circuits;
+    let found_circuits = find_circuits(container.objects);
 
-    let found_circuits = find_circuits(objects);
-
-    let revised_circuits = filter_circuits(sim_circuits, found_circuits)
-
-    sim_circuits = revised_circuits;
+    let revised_circuits = filter_circuits(container.circuits, found_circuits)
 
     console.log(revised_circuits);
 
-    console.log(sim_circuits);
+    container.circuits = revised_circuits;
 
     // let previous_currents = [];
     // let previous_integrals = [];

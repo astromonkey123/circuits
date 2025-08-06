@@ -1,5 +1,4 @@
-import { objects, connections } from './canvas.js';
-import { Element } from './element.js';
+import { container } from './app.js';
 
 export class Connection {
     constructor(x, y, parent) {
@@ -9,7 +8,7 @@ export class Connection {
         this.sibling;
         this.radius = 7;
         this.links = [];
-        connections.push(this);
+        container.connections.push(this);
     }
 
     contains(x, y) {
@@ -25,7 +24,7 @@ export class Connection {
 
     checkLinks() {
         this.links = [];
-        for (let connection of connections) {
+        for (let connection of container.connections) {
             if (connection == this) continue;
             if (Math.hypot(connection.x - this.x, connection.y - this.y) < connection.radius + this.radius) {
                 this.links.push(connection);

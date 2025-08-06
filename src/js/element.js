@@ -1,7 +1,7 @@
-import { objects, connections } from './canvas.js';
+import { container } from './app.js';
 import { Connection } from './connection.js';
 
-export class Element {
+class Element {
     constructor(x, y, type) {
         this.x = x;
         this.y = y;
@@ -13,7 +13,7 @@ export class Element {
         this.connection1.sibling = this.connection2;
         this.connection2.sibling = this.connection1;        
         this.circuits = [];
-        objects.push(this);
+        container.objects.push(this);
     }
 
     contains(x, y) {
