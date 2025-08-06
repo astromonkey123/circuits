@@ -108,7 +108,7 @@ canvas.addEventListener('dblclick', (e) => {
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
 
-    for (let object of objects) {
+    for (let object of container.objects) {
         if (object.type == 'wire') continue;
 
         if (object.contains(mouseX, mouseY)) {
@@ -145,16 +145,16 @@ canvas.addEventListener('mouseup', () => {
 accept_button.addEventListener('click', () => {
     input_box.style.visibility = "hidden";
 
-    if (edit_object.type == 'battery') {
+    if (container.editing.type == 'battery') {
         container.editing.emf = parseFloat(input_field.value);
 
-    } else if (edit_object.type == 'resistor') {
+    } else if (container.editing.type == 'resistor') {
         container.editing.resistance = parseFloat(input_field.value);
 
-    } else if (edit_object.type == 'capacitor') {
+    } else if (container.editing.type == 'capacitor') {
         container.editing.capacitance = parseFloat(input_field.value);
 
-    } else if (edit_object.type == 'inductor') {
+    } else if (container.editing.type == 'inductor') {
         container.editing.inductance = parseFloat(input_field.value);
 
     }
@@ -184,10 +184,10 @@ function drawAll() {
 }
 
 function clearCanvas() {
-    canvas_circuits = [];
-    objects = [];
-    connections = [];
-    dragging = null;
+    container.circuits = [];
+    container.objects = [];
+    container.connections = [];
+    container.dragging = null;
     resetGraph();
 }
 
@@ -204,7 +204,7 @@ function display_info() {
 function showInputBox(object) {
     input_box.style.visibility = "visible";
 
-    edit_object = object;
+    container.editing = object;
 
     if (object.type == 'battery') {
         input_type.innerHTML = "Voltage";
@@ -225,6 +225,4 @@ function showInputBox(object) {
     }
 }
 
-
-
-setInterval(appPeriodic, 1000);
+setInterval(appPeriodic, 10);

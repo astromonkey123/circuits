@@ -8,40 +8,41 @@ import { container } from './app.js';
 import { Battery, Wire, Resistor, Capacitor, Inductor } from './element.js';
 import { Circuit } from './circuit.js';
 
-const dt = 1e-2
+const dt = 1e-3
 
 export function simulate_periodic() {
     let found_circuits = find_circuits(container.objects);
 
     let revised_circuits = filter_circuits(container.circuits, found_circuits)
 
-    console.log(revised_circuits);
-
     container.circuits = revised_circuits;
 
-    // let previous_currents = [];
-    // let previous_integrals = [];
-    // for (let circuit of circuits) {
-    //     previous_currents.push(circuit.current);
-    //     previous_integrals.push(circuit.current_idt);
-    // }
+    let previous_currents = [];
+    let previous_integrals = [];
+    for (let circuit of container.circuits) {
+        previous_currents.push(circuit.current);
+        previous_integrals.push(circuit.current_idt);
+    }
 
-    // // Recalculate current five times for accuracy
-    // for (let n = 1; n < 5; n++) {
-    //     for (let i = 0; i < circuits.length; i++) {
-    //         let circuit = circuits[i];   
-    //         let current = step_sim(circuit);
+    // Recalculate current five times for accuracy
+    for (let n = 1; n < 5; n++) {
+        for (let i = 0; i < container.circuits.length; i++) {
+            let circuit = container.circuits[i];   
+            let current = step_sim(circuit);
 
-    //         circuit.current = current;
-    //         circuit.current_ddt = (current - previous_currents[i]) / dt;
-    //         circuit.current_idt = previous_integrals[i] + ( current * dt );
-    //         circuit.elapsed_time = circuits[i].elapsed_time + dt;
-    //     }
-    // }
+            circuit.current = current;
+            circuit.current_ddt = (current - previous_currents[i]) / dt;
+            circuit.current_idt = previous_integrals[i] + ( current * dt );
+        }
+    }
 
-    // for (let object of objects) {
-    //     step_object(object);
-    // }
+    for (let circuit of container.circuits) {
+        circuit.elapsed_time = (Math.round(circuit.elapsed_time / dt) * dt) + dt;
+    }
+
+    for (let object of container.objects) {
+        step_object(object);
+    }
 }
 
 function filter_circuits(existing_circuits, found_circuits) {
@@ -95,8 +96,6 @@ function check_equality(loop1, loop2) {
 function find_circuits(objects) {
     let loops = [];
 
-    console.log("----- finding circuits -----");
-
     for (let start_object of objects) {        
         let acting_loop = find_loop([start_object], start_object.connection1, 0);
 
@@ -142,7 +141,7 @@ function find_loop(loop, current_node, iter) {
 function step_sim(circuit) {
     let delta_v_functions = [];
 
-    for (let element in circuit.elements) {
+    for (let element of circuit.elements) {
         if (element.type == 'battery') {
             delta_v_functions.push(current => element.emf);
         } else if (element.type == 'resistor') {
@@ -171,7 +170,7 @@ function step_sim(circuit) {
                 other_integrals += other_circuit.current_idt;
             }
 
-            delta_v_functions.push(current => -( other_integrals + ( current * dt )) / element.capacitance);
+            delta_v_functions.push(current => -(other_integrals + circuit.current_idt) / element.capacitance);
         }
     }
 
@@ -189,23 +188,30 @@ function step_sim(circuit) {
 }
 
 function step_object(element) {
-    if (element.circuits.length == 0) { return null }
+    // if (element.circuits.length == 0) {
+    //     if (element.type == 'resistor') {
+    //         element.current = 0;
+    //     } else if (element.type == 'inductor') {
+    //         element.current_ddt = 0;
+    //     }
+    //     return null;
+    // }
 
     if (element.type == 'resistor') {
         element.current = 0;
-        for (let circuit in element.circuits) {
+        for (let circuit of element.circuits) {
             element.current += circuit.current;
         }
 
     } else if (element.type == 'inductor') {
         element.current_ddt = 0;
-        for (let circuit in element.circuits) {
+        for (let circuit of element.circuits) {
             element.current_ddt += circuit.current_ddt;
         }
 
     } else if (element.type == 'capacitor') {
         element.current_idt = 0;
-        for (let circuit in element.circuits) {
+        for (let circuit of element.circuits) {
             element.current_idt += circuit.current_idt;
         }
     }
