@@ -8,8 +8,8 @@ function slideBar(e) {
 
     if (total_slide > 6) {
         total_slide = 6;
-    } else if (total_slide < -400) {
-        total_slide = -400;
+    } else if (total_slide < -650) {
+        total_slide = -650;
     }
 
     button_slider.style.left = total_slide + "px";

@@ -72,7 +72,7 @@ body {
 
 .sliding-insert {
     position: absolute;
-    width: 100vw;
+    width: max-content;
     left: 6px;
 }
 
