@@ -1,6 +1,4 @@
-import { container } from './app.js';
-
-export class Connection {
+class Link {
     constructor(x, y, parent) {
         this.x = x;
         this.y = y;
@@ -8,26 +6,25 @@ export class Connection {
         this.sibling;
         this.radius = 7;
         this.links = [];
-        container.connections.push(this);
     }
 
-    contains(x, y) {
+    containsPoint(x, y) {
         return Math.hypot(this.x - x, this.y - y) < this.radius;
     }
 
-    move(x, y) {
+    setPosition(x, y) {
         if (this.parent.type == 'wire') {
             this.x = x;
             this.y = y;
         }
     }
 
-    checkLinks() {
+    findLinks(simContainer) {
         this.links = [];
-        for (let connection of container.connections) {
-            if (connection == this) continue;
-            if (Math.hypot(connection.x - this.x, connection.y - this.y) < connection.radius + this.radius) {
-                this.links.push(connection);
+        for (let link of simContainer.links) {
+            if (link == this) continue;
+            if (Math.hypot(link.x - this.x, link.y - this.y) < link.radius + this.radius) {
+                this.links.push(link);
             }
         }
     }
@@ -48,3 +45,5 @@ export class Connection {
         ctx.restore();
     }
 }
+
+export { Link };

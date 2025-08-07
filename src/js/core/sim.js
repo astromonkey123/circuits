@@ -1,43 +1,40 @@
-/* 
-Script to simulate circuits with batteries, resistors, inductors, and capacitors.
+import { Circuit, CircuitData } from '../components/Circuit.js';
+import { SimContainer, GraphContainer } from '../components/Container.js';
+import { Battery, Wire, Resistor, Capacitor, Inductor } from '../components/Element.js';
+import { Link } from '../components/Link.js';
 
-Currently only works for circuits in series and with batteries.
-*/
-
-import { container } from './app.js';
-import { Battery, Wire, Resistor, Capacitor, Inductor } from './element.js';
-import { Circuit } from './circuit.js';
+import { simContainer, graphContainer } from './app.js';
 
 const dt = 1e-3
 
 export function simulate_periodic() {
-    let found_circuits = find_circuits(container.objects);
+    let found_circuits = find_circuits(simContainer.elements);
 
-    let revised_circuits = filter_circuits(container.circuits, found_circuits)
+    let revised_circuits = filter_circuits(simContainer.circuits, found_circuits)
 
-    container.circuits = revised_circuits;
+    simContainer.circuits = revised_circuits;
 
-    for (let element of container.objects) {
+    for (let element of simContainer.elements) {
         element.circuits = [];
     }
 
-    for (let circuit of container.circuits) {
+    for (let circuit of simContainer.circuits) {
         for (let element of circuit.elements) {
             element.circuits.push(circuit);
         }
     }
-
+    
     let previous_currents = [];
     let previous_integrals = [];
-    for (let circuit of container.circuits) {
+    for (let circuit of simContainer.circuits) {
         previous_currents.push(circuit.current);
         previous_integrals.push(circuit.current_idt);
     }
 
     // Recalculate current five times for accuracy
     for (let n = 1; n < 5; n++) {
-        for (let i = 0; i < container.circuits.length; i++) {
-            let circuit = container.circuits[i];   
+        for (let i = 0; i < simContainer.circuits.length; i++) {
+            let circuit = simContainer.circuits[i];   
             let current = step_sim(circuit);
 
             circuit.current = current;
@@ -46,12 +43,14 @@ export function simulate_periodic() {
         }
     }
 
-    for (let circuit of container.circuits) {
+    for (let circuit of simContainer.circuits) {
         circuit.elapsed_time = (Math.round(circuit.elapsed_time / dt) * dt) + dt;
+        circuit.data.currents.push(circuit.current);
+        circuit.data.times.push(circuit.elapsed_time);
     }
 
-    for (let object of container.objects) {
-        step_object(object);
+    for (let element of simContainer.elements) {
+        step_object(element);
     }
 }
 
@@ -61,28 +60,35 @@ function filter_circuits(existing_circuits, found_circuits) {
     }
 
     let revised_circuits = [];
-    let new_circuits = [];
 
     for (let existing_circuit of existing_circuits) {
-        let discovered = false; // Has the circuit been discovered in the last check?
+        let discovered = false; // Does the circuit still exist?
 
         for (let found_circuit of found_circuits) {
-            let already_exists = false; // Does the found circuit already exist?
-
             if (check_equality(existing_circuit.elements, found_circuit.elements)) {
                 discovered = true;
-                already_exists = true;
-            }
-
-            // If it doesn't already exist, add it to the new list of circuits
-            if (!already_exists) {
-                new_circuits.push(found_circuit);
             }
         }
-
         // If it has been discovered, add it to the new list of circuits
         if (discovered) {
             revised_circuits.push(existing_circuit)
+        }
+    }
+
+    let new_circuits = [];
+
+    for (let found_circuit of found_circuits) {
+        let already_exists = false;
+
+        for (let existing_circuit of existing_circuits) {
+            if (check_equality(existing_circuit.elements, found_circuit.elements)) {
+                already_exists = true;
+            }
+        }
+
+        // If it doesn't already exist, add it to the new list of circuits
+        if (!already_exists) {
+            new_circuits.push(found_circuit);
         }
     }
 
@@ -103,11 +109,11 @@ function check_equality(loop1, loop2) {
     return check_containment(loop1, loop2) && check_containment(loop2, loop1);
 }
 
-function find_circuits(objects) {
+function find_circuits(elements) {
     let loops = [];
 
-    for (let start_object of objects) {        
-        let acting_loop = find_loop([start_object], start_object.connection1, 0);
+    for (let start_element of elements) {        
+        let acting_loop = find_loop([start_element], start_element.link1, 0);
 
         if (acting_loop === null) { continue; }
 
@@ -135,7 +141,7 @@ function find_loop(loop, current_node, iter) {
     if (current_node.links.length === 0) { return null; } // If there are no more links, there is no complete loop
 
     // If the current node is linked to the first element's other connection
-    if (current_node.links.includes(loop[0].connection2)) {
+    if (current_node.links.includes(loop[0].link2)) {
         return loop;
     }
 
