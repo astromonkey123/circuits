@@ -3,7 +3,7 @@ import { SimContainer, GraphContainer } from '../components/Container.js';
 import { Battery, Wire, Resistor, Capacitor, Inductor } from '../components/Element.js';
 import { Link } from '../components/Link.js';
 
-import { simContainer, graphContainer } from './app.js';
+import { simContainer, graphContainer, dt } from './app.js';
 
 function drawGraph() {
     const graph = graphContainer.canvas;
@@ -44,25 +44,35 @@ function drawGraph() {
     }
     ctx.restore();
 
+    const max_width = graph.width * 3/4;
+
     for (let i = 0; i < simContainer.circuits.length; i++) {
         const circuit = simContainer.circuits[i];
-        plot(ctx, circuit.data.times, circuit.data.currents, i);
+        plot(ctx, circuit.data.times, circuit.data.currents, max_width, i);
     }
+
+    // Plot the time increments
+    ctx.save();
+    ctx.translate(0, graph.height/2);
+    ctx.beginPath();
+    ctx.fillStyle = 'black';
+    ctx.strokeStyle = 'black';
+    ctx.font = "18px serif";
+    for (let time_step = 0; time_step < 4; time_step ++) {
+        const position = time_step * 250 * graphContainer.spacing;
+        if (time_step != 3) {
+            ctx.beginPath();
+            ctx.moveTo(max_width - position, graph.height/2);
+            ctx.lineTo(max_width - position, -graph.height/2);
+            ctx.stroke();
+        }
+        ctx.fillText("t+" + (time_step * 250 * dt).toFixed(2) + "s", max_width - position + 4, graph.height/2 - 4);
+    }
+
+    ctx.restore();
 
     const display_current = 1 / graphContainer.height_scale;
-    let display_text = "";
-
-    if (display_current == Infinity) {
-        display_text = "0A";
-    } else if (display_current >= 1) {
-        display_text = display_current + "A";
-    } else if (display_current >= 1e-3) {
-        display_text = (1000 * display_current) + "mA"
-    } else {
-        const scaling = ( 1 / (height_scale *  (Math.pow(10, Math.floor( Math.log10( display_current ) ) ) ) ) ).toFixed(3)
-        const exponential = Math.floor( Math.log10( display_current ) );
-        display_text = scaling + "e" + exponential + "A";
-    }
+    const display_text = formatCurrent(display_current);
 
     ctx.save();
     ctx.translate(0, graph.height/2);
@@ -73,8 +83,9 @@ function drawGraph() {
     ctx.restore();
 }
 
-function plot(ctx, times, currents, i) {
+function plot(ctx, times, currents, max_width, i) {
     const colors = ['#F28B82', '#FBBC04', '#FFF475', '#81C995', '#AECBFA', '#D7AEFB'];
+    const getHeight = (current) => -(2/3) * current * graphContainer.height_scale * graph.height/2;
 
     // Plot the current
     ctx.fillStyle = colors[i % colors.length];
@@ -82,26 +93,40 @@ function plot(ctx, times, currents, i) {
     ctx.save();
     ctx.translate(0, graph.height/2);
     ctx.beginPath();
-    ctx.moveTo(0, -(2/3) * currents[0] * graphContainer.height_scale * graph.height/2);
+    ctx.moveTo( max_width,  getHeight( currents.at(-1) ) );
     for (let x = 1; x < currents.length; x++) {
-        ctx.lineTo((x + 1) * graphContainer.spacing, -(2/3) * currents[x] * graphContainer.height_scale * graph.height/2);
+        ctx.lineTo(max_width - ((x + 1) * graphContainer.spacing), getHeight( currents.at(-x) ));
     }
     ctx.stroke();
+    ctx.restore();
 
-    // Plot the time increments
-    ctx.fillStyle = 'black';
-    ctx.strokeStyle = 'black';
-    ctx.font = "18px serif";
-    for (let x = 0; x < currents.length; x++) {
-        if (times[x] % 0.25 == 0) {
-            ctx.beginPath();
-            ctx.moveTo(x * graphContainer.spacing, graph.height/2);
-            ctx.lineTo(x * graphContainer.spacing, -graph.height/2);
-            ctx.stroke();
-            ctx.fillText(times[x].toFixed(3) + "s", x * graphContainer.spacing + 4, graph.height/2 - 4);
-        }
+    ctx.save();
+    ctx.translate(max_width, getHeight( currents.at(-1) ));
+    ctx.font = "14px serif";
+    if (Math.abs(currents.at(-1)) <= 0.1) {
+        ctx.fillText( (currents.at(-1) * 1000).toFixed(3) + "mA", 6, graph.height/2 + 5 );
+    } else {
+        ctx.fillText( currents.at(-1).toFixed(3) + "A", 6, graph.height/2 + 5 );
     }
     ctx.restore();
+}
+
+function formatCurrent(current) {
+    let display_text = "";
+
+    if (current == Infinity) {
+        display_text = "0A";
+    } else if (current >= 1) {
+        display_text = current + "A";
+    } else if (current >= 1e-3) {
+        display_text = (1000 * current) + "mA"
+    } else {
+        const scaling = ( 1 / (graphContainer.height_scale *  (Math.pow(10, Math.floor( Math.log10( current ) ) ) ) ) ).toFixed(3)
+        const exponential = Math.floor( Math.log10( current ) );
+        display_text = scaling + "e" + exponential + "A";
+    }
+
+    return display_text;
 }
 
 export { drawGraph };

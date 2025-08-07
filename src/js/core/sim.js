@@ -3,9 +3,7 @@ import { SimContainer, GraphContainer } from '../components/Container.js';
 import { Battery, Wire, Resistor, Capacitor, Inductor } from '../components/Element.js';
 import { Link } from '../components/Link.js';
 
-import { simContainer, graphContainer } from './app.js';
-
-const dt = 1e-3
+import { simContainer, graphContainer, dt } from './app.js';
 
 export function simulate_periodic() {
     let found_circuits = find_circuits(simContainer.elements);

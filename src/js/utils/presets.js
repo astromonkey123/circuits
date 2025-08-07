@@ -79,7 +79,7 @@ function addRC(simContainer) {
     simContainer.elements.push(new Capacitor(
         canvas.width/2 - 50,
         canvas.height/2 - 50,
-        0.5,
+        0.1,
         0
     ));
     simContainer.elements.push(new Wire(

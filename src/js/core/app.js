@@ -9,6 +9,7 @@ import { simulate_periodic } from './sim.js';
 
 export const simContainer = new SimContainer('canvas');
 export const graphContainer = new GraphContainer('graph');
+export const dt = 1e-3;
 
 const canvas = simContainer.canvas;
 const ctx = simContainer.ctx;
