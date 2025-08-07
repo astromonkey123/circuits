@@ -85,15 +85,15 @@ window.addEventListener('DOMContentLoaded', () => {
 
         if (clear_text.innerHTML === "Clear") {
             clear_text.innerHTML = "Confirm?"
-            slider_cover.style.width = "80%";
+            slider_cover.style.width = "82%";
             setTimeout(() => {
                 clear_text.innerHTML = "Clear";
-                slider_cover.style.width = "85%";
+                slider_cover.style.width = "87%";
             }, 2000); // Cancel after 2000ms
 
         } else if (clear_text.innerHTML === "Confirm?") {
             clear_text.innerHTML = "Clear"
-            slider_cover.style.width = "85%";
+            slider_cover.style.width = "87%";
             clearCanvas();
 
         }
