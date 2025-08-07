@@ -30,6 +30,7 @@ body {
     width: 200px;
     height: 460px;
     padding-left: 20px;
+    padding-right: 20px;
 }
 
 .canvas {
@@ -102,6 +103,12 @@ body {
     right: 6px;
     float: right;
     margin-left: 6px;
+}
+
+.button-center {
+    margin: auto;
+    margin-top: 10px;
+    width: max-content;
 }
 
 .button:hover {

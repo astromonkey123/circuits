@@ -4,6 +4,7 @@ import { Battery, Wire, Resistor, Capacitor, Inductor } from '../components/Elem
 import { Link } from '../components/Link.js';
 
 import { addSeries, addParallel, addRC, addRL, addRLC } from '../utils/presets.js';
+import { formatValue } from '../utils/prefixes.js';
 import { drawGraph } from './graph.js';
 import { simulate_periodic } from './sim.js';
 
@@ -79,7 +80,7 @@ window.addEventListener('DOMContentLoaded', () => {
         simContainer.updateLinks();
     });
     document.getElementById('clearCanvas').addEventListener('click', () => {
-        const clear_text = document.getElementById('clearText');
+        const clear_text = document.getElementById('clearCanvasText');
         const slider_cover = document.getElementById('slider-cover');
 
         if (clear_text.innerHTML === "Clear") {
@@ -95,6 +96,17 @@ window.addEventListener('DOMContentLoaded', () => {
             slider_cover.style.width = "85%";
             clearCanvas();
 
+        }
+    });
+    document.getElementById('showData').addEventListener('click', () => {
+        const show_text = document.getElementById('showDataText');
+
+        if (show_text.innerHTML === "Hide Details") {
+            show_text.innerHTML = "Show Details"
+            simContainer.showData = false;
+        } else if (show_text.innerHTML === "Show Details") {
+            show_text.innerHTML = "Hide Details"
+            simContainer.showData = true;
         }
     });
 });
@@ -193,7 +205,7 @@ function appPeriodic() {
 function drawAll() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     for (let element of simContainer.elements) {
-        element.draw(ctx);
+        element.draw(ctx, simContainer.showData);
     }
     for (let link of simContainer.links) {
         link.draw(ctx);
