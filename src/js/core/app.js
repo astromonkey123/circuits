@@ -3,7 +3,7 @@ import { SimContainer, GraphContainer, Selection } from '../components/Container
 import { Battery, Wire, Resistor, Capacitor, Inductor, Switch } from '../components/Element.js';
 import { Link } from '../components/Link.js';
 
-import { addSeries, addParallel, addSeriesSwitch, addRC, addRL, addRLC } from '../utils/presets.js';
+import { addElement, addPreset } from '../utils/presets.js';
 import { formatValue } from '../utils/prefixes.js';
 import { drawGraph } from './graph.js';
 import { simulate_periodic } from './sim.js';
@@ -29,71 +29,40 @@ const cancel_button = document.getElementById('cancel');
 
 window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('addBattery').addEventListener('click', () => {
-        simContainer.elements.push(new Battery(
-            canvas.width/2,
-            canvas.height/2 + 100,
-            1));
-        simContainer.updateLinks();
+        addElement(simContainer, 'battery');
     });
     document.getElementById('addResistor').addEventListener('click', () => {
-        simContainer.elements.push(new Resistor(
-            canvas.width/2,
-            canvas.height/2 + 50,
-            1));
-        simContainer.updateLinks();
+        addElement(simContainer, 'resistor');
     });
     document.getElementById('addCapacitor').addEventListener('click', () => {
-        simContainer.elements.push(new Capacitor(
-            canvas.width/2,
-            canvas.height/2,
-            0.001,
-            0));
-        simContainer.updateLinks();
+        addElement(simContainer, 'capacitor');
     });
     document.getElementById('addInductor').addEventListener('click', () => {
-        simContainer.elements.push(new Inductor(
-            canvas.width/2, 
-            canvas.height/2 - 50, 
-            1));
-        simContainer.updateLinks();
+        addElement(simContainer, 'inductor');
     });
     document.getElementById('addWire').addEventListener('click', () => {
-        simContainer.elements.push(new Wire(
-            canvas.width/2 - 50,
-            canvas.height/2 - 100,
-            canvas.width/2 + 50,
-            canvas.height/2 - 100));
-        simContainer.updateLinks();
+        addElement(simContainer, 'wire');
     });
     document.getElementById('addSwitch').addEventListener('click', () => {
-        simContainer.elements.push(new Switch(
-            canvas.width/2,
-            canvas.height/2));
-        simContainer.updateLinks();
+        addElement(simContainer, 'switch');
     });
     document.getElementById('addSeries').addEventListener('click', () => {
-        addSeries(simContainer);
-        simContainer.updateLinks();
+        addPreset(simContainer, 'series');
     });
     document.getElementById('addParallel').addEventListener('click', () => {
-        addParallel(simContainer);
-        simContainer.updateLinks();
+        addPreset(simContainer, 'parallel');
     });
     document.getElementById('addSeriesSwitch').addEventListener('click', () => {
-        addSeriesSwitch(simContainer);
-        simContainer.updateLinks();
+        addPreset(simContainer, 'switch');
     });
     document.getElementById('addRC').addEventListener('click', () => {
-        addRC(simContainer);
-        simContainer.updateLinks();
+        addPreset(simContainer, 'rc');
     });
     document.getElementById('addRL').addEventListener('click', () => {
-        addRL(simContainer);
-        simContainer.updateLinks();
+        addPreset(simContainer, 'rl');
     });
     document.getElementById('addRLC').addEventListener('click', () => {
-        addRLC(simContainer);
-        simContainer.updateLinks();
+        addPreset(simContainer, 'rlc');
     });
     document.getElementById('clearCanvas').addEventListener('click', () => {
         const clear_text = document.getElementById('clearCanvasText');
@@ -133,6 +102,22 @@ window.addEventListener('DOMContentLoaded', () => {
         } else if (run_text.innerHTML === "Play Simulation") {
             run_text.innerHTML = "Pause Simulation"
             simContainer.isSimulating = true;
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key == 'b') {
+            addElement(simContainer, 'battery');
+        } else if (e.key == 'r') {
+            addElement(simContainer, 'resistor');
+        } else if (e.key == 'c') {
+            addElement(simContainer, 'capacitor');
+        } else if (e.key == 'l') {
+            addElement(simContainer, 'inductor');
+        } else if (e.key == 'w') {
+            addElement(simContainer, 'wire');
+        } else if (e.key == 's') {
+            addElement(simContainer, 'switch');
         }
     });
 });
@@ -252,7 +237,6 @@ canvas.addEventListener('mouseup', () => {
         }
         simContainer.selection.isActive = false;
     }
-    console.log(simContainer.selection.objects);
 });
 
 accept_button.addEventListener('click', () => {
