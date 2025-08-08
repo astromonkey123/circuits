@@ -16,8 +16,14 @@ const canvas = simContainer.canvas;
 const ctx = simContainer.ctx;
 
 const input_box = document.getElementById('input-box');
-const input_type = document.getElementById('input-type');
-const input_field = document.getElementById('input-field');
+const input_entry1 = document.getElementById('input-entry-1');
+const input_entry2 = document.getElementById('input-entry-2');
+const input_type1 = document.getElementById('input-type-1');
+const input_type2 = document.getElementById('input-type-2');
+const input_field1 = document.getElementById('input-field-1');
+const input_field2 = document.getElementById('input-field-2');
+const input_unit1 = document.getElementById('input-unit-1');
+const input_unit2 = document.getElementById('input-unit-2');
 const accept_button = document.getElementById('accept');
 const cancel_button = document.getElementById('cancel');
 
@@ -240,24 +246,27 @@ canvas.addEventListener('mouseup', () => {
 
 accept_button.addEventListener('click', () => {
     input_box.style.visibility = "hidden";
+    input_entry2.style.visibility = "hidden";
 
     if (simContainer.editing.type == 'battery') {
-        simContainer.editing.emf = parseFloat(input_field.value);
+        simContainer.editing.emf = parseFloat(input_field1.value);
 
     } else if (simContainer.editing.type == 'resistor') {
-        simContainer.editing.resistance = parseFloat(input_field.value);
+        simContainer.editing.resistance = parseFloat(input_field1.value);
 
     } else if (simContainer.editing.type == 'capacitor') {
-        simContainer.editing.capacitance = parseFloat(input_field.value);
+        simContainer.editing.capacitance = parseFloat(input_field1.value);
+        simContainer.editing.current_idt = parseFloat(input_field2.value)
 
     } else if (simContainer.editing.type == 'inductor') {
-        simContainer.editing.inductance = parseFloat(input_field.value);
+        simContainer.editing.inductance = parseFloat(input_field1.value);
 
     }
 });
 
 cancel_button.addEventListener('click', () => {
     input_box.style.visibility = "hidden";
+    input_entry2.style.visibility = "hidden";
 });
 
 function appPeriodic() {
@@ -295,20 +304,44 @@ function showInputBox(element) {
     simContainer.editing = element;
 
     if (element.type == 'battery') {
-        input_type.innerHTML = "Voltage";
-        input_field.value = element.emf;
+        input_type1.innerHTML = "Voltage";
+        input_field1.value = element.emf;
+        input_unit1.innerHTML = "V";
+
+        input_entry2.style.visibility = "hidden";
+
+        input_box.style.height = "100px";
 
     } else if (element.type == 'resistor') {
-        input_type.innerHTML = "Resistance";
-        input_field.value = element.resistance;
+        input_type1.innerHTML = "Resistance";
+        input_field1.value = element.resistance;
+        input_unit1.innerHTML = "Ω";
+
+        input_entry2.style.visibility = "hidden";
+
+        input_box.style.height = "100px";
 
     } else if (element.type == 'capacitor') {
-        input_type.innerHTML = "Capacitance";
-        input_field.value = element.capacitance;
+        input_type1.innerHTML = "Capacitance";
+        input_field1.value = element.capacitance;
+        input_unit1.innerHTML = "F";
+
+        input_type2.innerHTML = "Stored Charge";
+        input_field2.value = element.current_idt;
+        input_unit2.innerHTML = "C";
+
+        input_entry2.style.visibility = "visible";
+
+        input_box.style.height = "150px";
 
     } else if (element.type == 'inductor') {
-        input_type.innerHTML = "Inductance";
-        input_field.value = element.inductance;
+        input_type1.innerHTML = "Inductance";
+        input_field1.value = element.inductance;
+        input_unit1.innerHTML = "H";
+
+        input_entry2.style.visibility = "hidden";
+
+        input_box.style.height = "100px";
 
     }
 }
