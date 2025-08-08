@@ -16,6 +16,7 @@ class SimContainer extends Container {
         this.offsets = {x: 0, y: 0, rotation: 0};
         this.showData = true;
         this.selection = new Selection();
+        this.isSimulating = true;
     }
 
     updateLinks() {

@@ -124,6 +124,17 @@ window.addEventListener('DOMContentLoaded', () => {
             simContainer.showData = true;
         }
     });
+    document.getElementById('runSimulation').addEventListener('click', () => {
+        const run_text = document.getElementById('runSimulationText');
+
+        if (run_text.innerHTML === "Pause Simulation") {
+            run_text.innerHTML = "Play Simulation"
+            simContainer.isSimulating = false;
+        } else if (run_text.innerHTML === "Play Simulation") {
+            run_text.innerHTML = "Pause Simulation"
+            simContainer.isSimulating = true;
+        }
+    });
 });
 
 canvas.addEventListener('mousedown', (e) => {
@@ -272,7 +283,9 @@ cancel_button.addEventListener('click', () => {
 function appPeriodic() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawObjects();
-    simulate_periodic();
+    if (simContainer.isSimulating) {
+        simulate_periodic();
+    }
     display_info();
     drawGraph();
 }
