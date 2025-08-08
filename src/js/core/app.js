@@ -3,7 +3,8 @@ import { SimContainer, GraphContainer, Selection } from '../components/Container
 import { Battery, Wire, Resistor, Capacitor, Inductor, Switch } from '../components/Element.js';
 import { Link } from '../components/Link.js';
 
-import { addElement, addPreset } from '../utils/presets.js';
+import { addElement } from '../utils/elements.js';
+import { addPreset } from '../utils/presets.js';
 import { formatValue } from '../utils/prefixes.js';
 import { drawGraph } from './graph.js';
 import { simulate_periodic } from './sim.js';
@@ -60,6 +61,9 @@ window.addEventListener('DOMContentLoaded', () => {
     });
     document.getElementById('addRL').addEventListener('click', () => {
         addPreset(simContainer, 'rl');
+    });
+    document.getElementById('addLC').addEventListener('click', () => {
+        addPreset(simContainer, 'lc');
     });
     document.getElementById('addRLC').addEventListener('click', () => {
         addPreset(simContainer, 'rlc');
