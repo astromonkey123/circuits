@@ -5,9 +5,8 @@ import { Link } from '../components/Link.js';
 
 import { addElement } from '../utils/elements.js';
 import { addPreset } from '../utils/presets.js';
-import { formatValue } from '../utils/prefixes.js';
 import { drawGraph } from './graph.js';
-import { simulate_periodic } from './sim.js';
+import { simulatePeriodic } from './sim.js';
 
 export const simContainer = new SimContainer('canvas');
 export const graphContainer = new GraphContainer('graph');
@@ -272,7 +271,7 @@ function appPeriodic() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawObjects();
     if (simContainer.isSimulating) {
-        simulate_periodic();
+        simulatePeriodic();
     }
     display_info();
     drawGraph();
