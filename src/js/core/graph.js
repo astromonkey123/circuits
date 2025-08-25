@@ -5,13 +5,14 @@ import { Link } from '../components/Link.js';
 
 import { simContainer, graphContainer, dt } from './app.js';
 import { formatValue } from '../utils/prefixes.js';
+import { rainbow, highlight, light, dark } from '../utils/colors.js';
 
 function drawGraph() {
     const graph = graphContainer.canvas;
     const ctx = graphContainer.ctx;
 
     for (const circuit of simContainer.circuits) {
-        while (circuit.data.currents.length > graphContainer.num_times * ( 7/8 )) {
+        while (circuit.data.currents.length > graphContainer.num_times * ( 3/4 )) {
             circuit.data.currents.shift();
             circuit.data.times.shift();
         }
@@ -33,14 +34,14 @@ function drawGraph() {
     ctx.clearRect(0, 0, graph.width, graph.height);
 
     // Draw the horizontal lines
-    ctx.fillStyle = 'black';
-    ctx.strokeStyle = 'black';
+    ctx.fillStyle = light;
+    ctx.strokeStyle = light;
     ctx.save();
     ctx.translate(0, graph.height/2);
     for (let h = -graph.height/3; h <= graph.height/3; h += graph.height/6) {
         ctx.beginPath();
         ctx.moveTo(0, h);
-        ctx.lineTo(graph.width, h);
+        ctx.lineTo(graph.width * (3/4), h);
         ctx.stroke();
     }
     ctx.restore();
@@ -56,8 +57,8 @@ function drawGraph() {
     ctx.save();
     ctx.translate(0, graph.height/2);
     ctx.beginPath();
-    ctx.fillStyle = 'black';
-    ctx.strokeStyle = 'black';
+    ctx.fillStyle = light;
+    ctx.strokeStyle = light;
     ctx.font = "18px serif";
     for (let time_step = 0; time_step < 4; time_step ++) {
         const position = time_step * 250 * graphContainer.spacing;
@@ -77,20 +78,20 @@ function drawGraph() {
 
     ctx.save();
     ctx.translate(0, graph.height/2);
-    ctx.fillStyle = 'black';
-    ctx.strokeStyle = 'black';
+    ctx.fillStyle = light;
+    ctx.strokeStyle = light;
     ctx.font = "18px serif";
     ctx.fillText( display_text, 6, -graph.height/2 + 18 );
     ctx.restore();
 }
 
 function plot(ctx, times, currents, max_width, i) {
-    const colors = ['#F28B82', '#FBBC04', '#FFF475', '#81C995', '#AECBFA', '#D7AEFB'];
     const getHeight = (current) => -(2/3) * current * graphContainer.height_scale * graph.height/2;
 
     // Plot the current
-    ctx.fillStyle = colors[i % colors.length];
-    ctx.strokeStyle = colors[i % colors.length];
+    ctx.fillStyle = rainbow[i % rainbow.length];
+    ctx.strokeStyle = rainbow[i % rainbow.length];
+    ctx.lineWidth = 2;
     ctx.save();
     ctx.translate(0, graph.height/2);
     ctx.beginPath();
@@ -103,9 +104,10 @@ function plot(ctx, times, currents, max_width, i) {
 
     ctx.save();
     ctx.translate(max_width, getHeight( currents.at(-1) ));
-    ctx.font = "14px serif";
+    ctx.font = "18px serif";
     ctx.fillText(formatValue(currents.at(-1), "A", 3), 6, graph.height/2 + 5);
     ctx.restore();
+    ctx.lineWidth = 1;
 }
 
 function formatCurrent(current) {
