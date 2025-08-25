@@ -41,10 +41,27 @@ body {
     height: 460px;
     padding-left: 20px;
     padding-right: 20px;
+    overflow: hidden;
 }
 
 .container.h3 {
     font-size: 14px;
+}
+
+.bottom-bar {
+    position: absolute;
+    width: 100%;
+    height: 50px;
+    bottom: 0; left: 0;
+}
+
+.bar-item {
+    float: left;
+    margin-top: 8px;
+    margin-left: 8px;
+    border-radius: 10px;
+    width: 34px; height: 34px;
+    text-align: center;
 }
 
 .canvas {
@@ -96,8 +113,8 @@ body {
     border-radius: 10px;
     padding-left: 15px; padding-right: 15px;
     height: 34px;
-    background-color: var(--highlight);
     color: var(--light);
+    background-color: var(--highlight);
     display: flex;
     align-items: center;
     box-sizing: border-box;
@@ -105,6 +122,7 @@ body {
     border-style: solid;
     border-color: var(--light);
     border-width: 0px;
+    padding-top: 2px;
     transition: box-shadow 0.4s ease;
 }
 
@@ -212,4 +230,21 @@ body {
 
 .input-button:hover {
     box-shadow: 0 5px 10px var(--shadow);
+}
+
+.help-window {
+    visibility: hidden;
+    position: absolute;
+    top: calc(150px + 200px - 140px);
+    left: calc(220px + 335px - 250px);
+    box-sizing: border-box;
+    border-radius: 10px;
+    border-style: solid;
+    border-color: var(--light);
+    border-width: 1px;
+    width: 500px;
+    height: 280px;
+    background-color: var(--panel);
+    color: var(--light);
+    padding-left: 20px;
 }
