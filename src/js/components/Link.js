@@ -1,12 +1,13 @@
 import { rainbow, highlight, light, dark } from '../utils/colors.js';
 
 class Link {
-    constructor(x, y, parent) {
+    constructor(x, y, parent, type="normal") {
         this.x = x;
         this.y = y;
         this.parent = parent;
         this.sibling;
         this.radius = 6;
+        this.type = type;
         this.links = [];
     }
 

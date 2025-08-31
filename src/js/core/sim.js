@@ -46,6 +46,12 @@ function findLoop(loop, directions, current_node, iter) {
         }
     }
 
+    if (current_node.links[0].type == "gate") {
+        const new_loop = [...loop, current_node.links[0]];
+        const new_directions = [...directions, true];
+
+        return new Circuit(new_loop, new_directions);
+    }
     const next_node = current_node.links[0].sibling;
     const next_direction = (next_node == next_node.parent.link2);
 
@@ -105,6 +111,7 @@ function updateMemberCircuits() {
     // Go through each circuit and add itself to the circuit list of each element
     for (const circuit of simContainer.circuits) {
         for (const element of circuit.elements) {
+            if (element.type == "gate") continue;
             element.circuits.push(circuit);
         }
     }
@@ -121,6 +128,7 @@ function simulateTimeStep() {
     // Recalculate current five times for accuracy
     for (let i = 0; i < simContainer.circuits.length; i++) {
         let circuit = simContainer.circuits[i];   
+        console.log(circuit.elements);
         let current = stepCircuit(circuit);
 
         circuit.current = current;
@@ -177,6 +185,38 @@ function stepCircuit(circuit){
             
             if (!element.state) return 0;
         
+        } else if (element.type == 'nmosfet') {
+            const gs_voltage = element.source_voltage - element.gate_voltage;
+            const ds_voltage = element.source_voltage - element.drain_voltage;
+            const t_voltage = element.threshold;
+
+            console.log(`t: ${t_voltage}`);
+            console.log(`s: ${element.source_voltage}`);
+            console.log(`g: ${element.gate_voltage}`);
+            console.log(`d: ${element.drain_voltage}`);
+
+            const mu_n = 1;
+            const c_ox = 1;
+        
+            if (gs_voltage - t_voltage < 0) {
+                return 0;
+            } else if (gs_voltage - t_voltage > ds_voltage) {
+                return mu_n * c_ox * Math.floor(gs_voltage - (ds_voltage / 2) - t_voltage) * ds_voltage;
+            } else if (gs_voltage - t_voltage <= ds_voltage) {
+                return 0.5 * mu_n * c_ox * (Math.pow(gs_voltage - t_voltage, 2))
+            }
+
+        } else if (element.type == 'pmosfet') {
+
+            if (direction) {
+                return 0;
+            } else {
+                return 1;
+            }
+
+        } else if (element.type == 'gate') {
+
+            return 1
         }
     }
 

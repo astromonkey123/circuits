@@ -46,6 +46,12 @@ window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('addSwitch').addEventListener('click', () => {
         addElement(simContainer, 'switch');
     });
+    document.getElementById('addnMOSFET').addEventListener('click', () => {
+        addElement(simContainer, 'nmosfet');
+    });
+    document.getElementById('addpMOSFET').addEventListener('click', () => {
+        addElement(simContainer, 'pmosfet');
+    });
     document.getElementById('addSeries').addEventListener('click', () => {
         addPreset(simContainer, 'series');
     });
@@ -66,6 +72,12 @@ window.addEventListener('DOMContentLoaded', () => {
     });
     document.getElementById('addRLC').addEventListener('click', () => {
         addPreset(simContainer, 'rlc');
+    });
+    document.getElementById('addnMOSFETSwitch').addEventListener('click', () => {
+        addPreset(simContainer, 'nswitch');
+    });
+    document.getElementById('addpMOSFETSwitch').addEventListener('click', () => {
+        addPreset(simContainer, 'pswitch');
     });
     document.getElementById('clearCanvas').addEventListener('click', () => {
         const clear_text = document.getElementById('clearCanvasText');
@@ -346,4 +358,5 @@ function showInputBox(element) {
     }
 }
 
-setInterval(appPeriodic, 10);
+addPreset(simContainer, 'nswitch');
+setInterval(appPeriodic, 1000);

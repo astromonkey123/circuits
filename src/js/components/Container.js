@@ -24,6 +24,9 @@ class SimContainer extends Container {
         for (const element of this.elements) {
             this.links.push(element.link1);
             this.links.push(element.link2);
+            if (element.gate != null) {
+                this.links.push(element.gate);
+            }
         }
     }
 

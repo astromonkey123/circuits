@@ -1,4 +1,4 @@
-import { Battery, Wire, Resistor, Capacitor, Inductor, Switch } from '../components/Element.js';
+import { Battery, Wire, Resistor, Capacitor, Inductor, Switch, nMOSFET, pMOSFET } from '../components/Element.js';
 
 function addPreset(simContainer, type) {
     if (type == 'series') {
@@ -15,6 +15,10 @@ function addPreset(simContainer, type) {
         addLC(simContainer);
     } else if (type == 'rlc') {
         addRLC(simContainer);
+    } else if (type == 'nswitch') {
+        addnMOSFETSwitch(simContainer);
+    } else if (type == 'pswitch') {
+        addpMOSFETSwitch(simContainer);
     }
     simContainer.updateLinks();
 
@@ -283,6 +287,144 @@ function addRLC(simContainer) {
         canvas.height/2 + 50,
         canvas.width/2 + 150,
         canvas.height/2 + 50
+    ));
+}
+
+function addnMOSFETSwitch(simContainer) {
+    simContainer.elements.push(new Battery(
+        canvas.width/2 + 100,
+        canvas.height/2,
+        0.5
+    ));
+    simContainer.elements.push(new Resistor(
+        canvas.width/2,
+        canvas.height/2,
+        10
+    ))
+    simContainer.elements.push(new Wire(
+        canvas.width/2 + 50,
+        canvas.height/2 - 100,
+        canvas.width/2 + 50,
+        canvas.height/2
+    ));
+    simContainer.elements.push(new Switch(
+        canvas.width/2,
+        canvas.height/2 - 100
+    ));
+    simContainer.elements.push(new Wire(
+        canvas.width/2 - 50,
+        canvas.height/2 - 100,
+        canvas.width/2 - 100,
+        canvas.height/2 - 100,
+    ));
+    simContainer.elements.push(new Wire(
+        canvas.width/2 - 100,
+        canvas.height/2 - 100,
+        canvas.width/2 - 100,
+        canvas.height/2 - 35,
+    ));
+    simContainer.elements.push(new nMOSFET(
+        canvas.width/2 - 100,
+        canvas.height/2,
+        1
+    ));
+    simContainer.elements.push(new Wire(
+        canvas.width/2 - 150,
+        canvas.height/2,
+        canvas.width/2 - 150,
+        canvas.height/2 + 100
+    ));
+    simContainer.elements.push(new Wire(
+        canvas.width/2 - 150,
+        canvas.height/2 + 100,
+        canvas.width/2 - 50,
+        canvas.height/2 + 100
+    ));
+    simContainer.elements.push(new Resistor(
+        canvas.width/2,
+        canvas.height/2 + 100,
+        5
+    ))
+    simContainer.elements.push(new Wire(
+        canvas.width/2 + 50,
+        canvas.height/2 + 100,
+        canvas.width/2 + 150,
+        canvas.height/2 + 100
+    ));
+    simContainer.elements.push(new Wire(
+        canvas.width/2 + 150,
+        canvas.height/2,
+        canvas.width/2 + 150,
+        canvas.height/2 + 100
+    ));
+}
+
+function addpMOSFETSwitch(simContainer) {
+    simContainer.elements.push(new Battery(
+        canvas.width/2 + 100,
+        canvas.height/2,
+        0.5
+    ));
+    simContainer.elements.push(new Resistor(
+        canvas.width/2,
+        canvas.height/2,
+        10
+    ))
+    simContainer.elements.push(new Wire(
+        canvas.width/2 + 50,
+        canvas.height/2 - 100,
+        canvas.width/2 + 50,
+        canvas.height/2
+    ));
+    simContainer.elements.push(new Switch(
+        canvas.width/2,
+        canvas.height/2 - 100
+    ));
+    simContainer.elements.push(new Wire(
+        canvas.width/2 - 50,
+        canvas.height/2 - 100,
+        canvas.width/2 - 100,
+        canvas.height/2 - 100,
+    ));
+    simContainer.elements.push(new Wire(
+        canvas.width/2 - 100,
+        canvas.height/2 - 100,
+        canvas.width/2 - 100,
+        canvas.height/2 - 35,
+    ));
+    simContainer.elements.push(new pMOSFET(
+        canvas.width/2 - 100,
+        canvas.height/2,
+        1
+    ));
+    simContainer.elements.push(new Wire(
+        canvas.width/2 - 150,
+        canvas.height/2,
+        canvas.width/2 - 150,
+        canvas.height/2 + 100
+    ));
+    simContainer.elements.push(new Wire(
+        canvas.width/2 - 150,
+        canvas.height/2 + 100,
+        canvas.width/2 - 50,
+        canvas.height/2 + 100
+    ));
+    simContainer.elements.push(new Resistor(
+        canvas.width/2,
+        canvas.height/2 + 100,
+        5
+    ))
+    simContainer.elements.push(new Wire(
+        canvas.width/2 + 50,
+        canvas.height/2 + 100,
+        canvas.width/2 + 150,
+        canvas.height/2 + 100
+    ));
+    simContainer.elements.push(new Wire(
+        canvas.width/2 + 150,
+        canvas.height/2,
+        canvas.width/2 + 150,
+        canvas.height/2 + 100
     ));
 }
 
