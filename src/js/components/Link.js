@@ -1,7 +1,9 @@
-import { rainbow, highlight, light, dark } from '../utils/colors.js';
-
-class Link {
+export class Link {
     constructor(x, y, parent, type="normal") {
+        // Physics properties
+        this.physics = new Physics();
+
+        // Sim properties
         this.x = x;
         this.y = y;
         this.parent = parent;
@@ -48,5 +50,3 @@ class Link {
         ctx.restore();
     }
 }
-
-export { Link };
