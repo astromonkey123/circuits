@@ -1,4 +1,8 @@
-class Wire extends Element {
+import { Element } from "../Element.js";
+import { rainbow, highlight, light, dark } from "../../utils/colors.js";
+import { formatValue } from "../../utils/prefixes.js";
+
+export class Wire extends Element {
     constructor(x1, y1, x2, y2) {
         super(x1, y1, 'wire');
         this.link1.setPosition(x1, y1);

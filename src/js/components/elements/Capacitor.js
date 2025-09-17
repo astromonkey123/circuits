@@ -1,8 +1,12 @@
-class Capacitor extends Element {
+import { Element } from "../Element.js";
+import { rainbow, highlight, light, dark } from "../../utils/colors.js";
+import { formatValue } from "../../utils/prefixes.js";
+
+export class Capacitor extends Element {
     constructor(x, y, capacitance, initial_charge) {
         super(x, y, 'capacitor');
         this.capacitance = capacitance;
-        this.current_idt = initial_charge;
+        this.physics.current_idt = initial_charge;
     }
 
     draw(ctx, showData) {

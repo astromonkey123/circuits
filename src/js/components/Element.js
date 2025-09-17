@@ -1,10 +1,10 @@
+import { Link } from "./Link.js";
+import { PhysicsContainer } from "./Container.js";
+
 export class Element {
     constructor(x, y, type) {
         // Physics properties
-        this.current = 0;
-        this.current_idt = 0;
-        this.current_ddt = 0;
-        this.emf = 0;
+        this.physics = new PhysicsContainer();
 
         // Sim properties
         this.x = x;

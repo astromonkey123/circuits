@@ -1,7 +1,11 @@
-class Battery extends Element {
+import { Element } from "../Element.js";
+import { rainbow, highlight, light, dark } from "../../utils/colors.js";
+import { formatValue } from "../../utils/prefixes.js";
+
+export class Battery extends Element {
     constructor(x, y, emf) {
         super(x, y, 'battery');
-        this.emf = emf;
+        this.physics.voltage = emf;
     }
 
     draw(ctx, showData) {

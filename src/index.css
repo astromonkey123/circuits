@@ -1,47 +1,44 @@
 :root {
-    --panel: rgb(30, 33, 45);
-    --background: rgb(50, 55, 75);
-    --highlight: rgb(70, 77, 105);
-    --dark: rgb(20, 22, 30);
-    --light: rgb(190, 200, 220);
-    --shadow: rgba(20, 22, 30, 0.5);
+  --highlight: rgb(26, 27, 36);
+  --shadow: rgb(22, 22, 28);
+  --panel: rgb(31, 33, 40);
+  --light: rgb(190, 200, 220);
 }
 
 body {
     position: relative;
     width: 900px;
-    background-color: var(--background);
+    background-color: var(--highlight);
+    font-family: Arial, Helvetica, sans-serif;
     margin: auto;
 }
 
 .graph {
+    z-index: 100;
     position: absolute;
     top: 10px; left: 10px;
     box-sizing: border-box;
-    border-radius: 10px;
+    border-radius: 25px;
     background-color: var(--panel);
-    border-style: solid;
-    border-color: var(--light);
-    border-width: 0px;
     width: 880px;
     height: 130px;
+    box-shadow: 0 0 5px 5px var(--shadow);
 }
 
 .container {
+    z-index: 100;
     position: absolute;
     top: 150px; left: 10px;
     box-sizing: border-box;
-    border-radius: 10px;
+    border-radius: 25px;
     background-color: var(--panel);
-    border-style: solid;
-    border-color: var(--light);
-    border-width: 0px;
     color: var(--light);
     width: 200px;
     height: 460px;
     padding-left: 20px;
     padding-right: 20px;
     overflow: hidden;
+    box-shadow: 0 0 5px 5px var(--shadow);
 }
 
 .container.h3 {
@@ -68,28 +65,25 @@ body {
     position: absolute;
     top: 150px; left: 220px;
     box-sizing: border-box;
-    border-radius: 10px;
+    border-radius: 25px;
     background-color: var(--panel);
-    border-style: solid;
-    border-color: var(--light);
-    border-width: 1px;
     width: 670px;
     height: 400px;
+    box-shadow: 0 0 10px 10px var(--shadow);
 }
 
 .button-grid{
+    z-index: 100;
     position: absolute;
     top: 560px; left: 220px;
     box-sizing: border-box;
     background-color: var(--panel);
     width: 670px;
     height: 50px;
-    border-radius: 10px;
-    border-style: solid;
-    border-color: var(--light);
-    border-width: 0px;
+    border-radius: 25px;
     padding: 6px;
     overflow: hidden;
+    box-shadow: 0 0 5px 5px var(--shadow);
 }
 
 .sliding-cover {
@@ -114,7 +108,7 @@ body {
     padding-left: 15px; padding-right: 15px;
     height: 34px;
     color: var(--light);
-    background-color: var(--highlight);
+    background-color: var(--shadow);
     display: flex;
     align-items: center;
     box-sizing: border-box;

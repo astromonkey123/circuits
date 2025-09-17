@@ -1,8 +1,11 @@
-class Resistor extends Element {
+import { Element } from "../Element.js";
+import { rainbow, highlight, light, dark } from "../../utils/colors.js";
+import { formatValue } from "../../utils/prefixes.js";
+
+export class Resistor extends Element {
     constructor(x, y, resistance) {
         super(x, y, 'resistor');
         this.resistance = resistance;
-        this.current = 0;
     }
 
     draw(ctx, showData) {

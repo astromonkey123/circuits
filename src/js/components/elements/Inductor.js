@@ -1,8 +1,11 @@
-class Inductor extends Element {
+import { Element } from "../Element.js";
+import { rainbow, highlight, light, dark } from "../../utils/colors.js";
+import { formatValue } from "../../utils/prefixes.js";
+
+export class Inductor extends Element {
     constructor(x, y, inductance) {
         super(x, y, 'inductor');
         this.inductance = inductance;
-        this.current_ddt = 0;
     }
 
     draw(ctx, showData) {

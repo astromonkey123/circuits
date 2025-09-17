@@ -1,8 +1,9 @@
-import { Circuit, CircuitData } from '../components/Circuit.js';
-import { SimContainer, GraphContainer, Selection } from '../components/Container.js';
-import { Battery, Wire, Resistor, Capacitor, Inductor, Switch } from '../components/Element.js';
-import { Link } from '../components/Link.js';
+import { Circuit } from '../components/Circuit.js';
+import { Link } from "../components/Link.js";
 
+import { Container, DataContainer, GraphContainer, PhysicsContainer, SimContainer } from "../components/Container.js"
+import { Selection } from "../components/Selection.js";
+ 
 import { addElement } from '../utils/elements.js';
 import { addPreset } from '../utils/presets.js';
 import { drawGraph } from './graph.js';

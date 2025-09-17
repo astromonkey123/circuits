@@ -1,7 +1,10 @@
+import { PhysicsContainer } from "./Container.js";
+import { rainbow, highlight, light, dark } from "../utils/colors.js";
+
 export class Link {
     constructor(x, y, parent, type="normal") {
         // Physics properties
-        this.physics = new Physics();
+        this.physics = new PhysicsContainer();
 
         // Sim properties
         this.x = x;

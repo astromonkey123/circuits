@@ -1,7 +1,4 @@
-import { Circuit, CircuitData } from '../components/Circuit.js';
-import { SimContainer, GraphContainer } from '../components/Container.js';
-import { Battery, Wire, Resistor, Capacitor, Inductor, Switch } from '../components/Element.js';
-import { Link } from '../components/Link.js';
+import { Circuit } from '../components/Circuit.js';
 
 import { simContainer, graphContainer, dt } from './app.js';
 

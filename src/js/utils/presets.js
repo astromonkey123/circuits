@@ -1,4 +1,10 @@
-import { Battery, Wire, Resistor, Capacitor, Inductor, Switch, nMOSFET, pMOSFET } from '../components/Element.js';
+import { Battery } from "../components/elements/Battery.js";
+import { Wire } from "../components/elements/Wire.js";
+import { Resistor } from "../components/elements/Resistor.js";
+import { Inductor } from "../components/elements/Inductor.js";
+import { Capacitor } from "../components/elements/Capacitor.js";
+import { Switch } from "../components/elements/Switch.js";
+import { pMOSFET, nMOSFET } from "../components/elements/MOSFET.js";
 
 function addPreset(simContainer, type) {
     if (type == 'series') {
