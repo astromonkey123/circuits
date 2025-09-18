@@ -16,11 +16,11 @@ body {
 .graph {
     z-index: 100;
     position: absolute;
-    top: 10px; left: 10px;
     box-sizing: border-box;
+    top: 10px;
     border-radius: 25px;
     background-color: var(--panel);
-    width: 880px;
+    width: 900px;
     height: 130px;
     box-shadow: 0 0 5px 5px var(--shadow);
 }
@@ -28,13 +28,13 @@ body {
 .container {
     z-index: 100;
     position: absolute;
-    top: 150px; left: 10px;
+    top: 150px;
     box-sizing: border-box;
     border-radius: 25px;
     background-color: var(--panel);
     color: var(--light);
     width: 200px;
-    height: 460px;
+    height: 470px;
     padding-left: 20px;
     padding-right: 20px;
     overflow: hidden;
@@ -63,22 +63,22 @@ body {
 
 .canvas {
     position: absolute;
-    top: 150px; left: 220px;
+    top: 150px; left: 210px;
     box-sizing: border-box;
     border-radius: 25px;
     background-color: var(--panel);
-    width: 670px;
-    height: 400px;
+    width: 690px;
+    height: 410px;
     box-shadow: 0 0 10px 10px var(--shadow);
 }
 
 .button-grid{
     z-index: 100;
     position: absolute;
-    top: 560px; left: 220px;
+    top: 570px; left: 210px;
     box-sizing: border-box;
     background-color: var(--panel);
-    width: 670px;
+    width: 690px;
     height: 50px;
     border-radius: 25px;
     padding: 6px;

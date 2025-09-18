@@ -1,13 +1,12 @@
-import { PhysicsContainer } from "./Container.js";
+import { DataContainer, PhysicsContainer } from "./Container.js";
 
 export class Circuit {
-    constructor(elements, directions) {
+    constructor(links) {
         // Physics properties
         this.physics = new PhysicsContainer();
 
         // Sim properties
-        this.elements = elements;
-        this.directions = directions;
-        this.data = new CircuitData();
+        this.links = links;
+        // this.data = new DataContainer();
     }
 }

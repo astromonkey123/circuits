@@ -1,6 +1,8 @@
 import { Link } from "./Link.js";
 import { PhysicsContainer } from "./Container.js";
 
+import { simContainer } from "../core/app.js";
+
 export class Element {
     constructor(x, y, type) {
         // Physics properties
@@ -17,6 +19,7 @@ export class Element {
         this.link1.sibling = this.link2;
         this.link2.sibling = this.link1;
         this.circuits = [];
+        // simContainer.elements.push(this);
     }
 
     containsPoint(x, y) {

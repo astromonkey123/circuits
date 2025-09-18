@@ -1,4 +1,5 @@
 import { Selection } from "./Selection.js";
+import { dt } from "../core/app.js";
 
 class Container {
     constructor(id) {
@@ -42,6 +43,11 @@ class PhysicsContainer {
         this.current_ddt = current_ddt;
         this.voltage = voltage;
         this.time = time;
+        this.dt = dt;
+    }
+
+    stepTime() {
+        this.time += this.dt;
     }
 }
 

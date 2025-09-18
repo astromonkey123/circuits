@@ -8,6 +8,7 @@ import { addElement } from '../utils/elements.js';
 import { addPreset } from '../utils/presets.js';
 import { drawGraph } from './graph.js';
 import { simulatePeriodic } from './sim.js';
+import { detect } from "./detect.js";
 
 export const simContainer = new SimContainer('canvas');
 export const graphContainer = new GraphContainer('graph');
@@ -282,33 +283,39 @@ cancel_button.addEventListener('click', () => {
 
 function appPeriodic() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    detect();
+
+    // if (simContainer.isSimulating) {
+    //     simulatePeriodic();
+    // }
+
     drawObjects();
-    if (simContainer.isSimulating) {
-        simulatePeriodic();
-    }
-    display_info();
-    drawGraph();
+    // displayInfo();
+    // drawGraph();
 }
 
 function drawObjects() {
     for (let element of simContainer.elements) {
         element.draw(ctx, simContainer.showData);
     }
+
     for (let link of simContainer.links) {
         link.draw(ctx);
         link.findLinks(simContainer);
     }
+
     simContainer.selection.draw(ctx);
 }
 
-function display_info() {
+function displayInfo() {
     if (simContainer.circuits.length === 0) return;
 
     let circuit = simContainer.circuits[0];
-    document.getElementById("current").innerHTML = "Current: " + "<br>" + circuit.current.toFixed(3) + "A";
-    document.getElementById("integral").innerHTML = "Integral: " + "<br>" + circuit.current_idt.toFixed(3) + "As";
-    document.getElementById("derivative").innerHTML = "Derivative: " + "<br>" + circuit.current_ddt.toFixed(3) + "A/s";
-    document.getElementById("time").innerHTML = "Time: " + "<br>" + circuit.elapsed_time.toFixed(3) + "s";
+    document.getElementById("current").innerHTML = "Current: " + "<br>" + circuit.physics.current.toFixed(3) + "A";
+    document.getElementById("integral").innerHTML = "Integral: " + "<br>" + circuit.physics.current_idt.toFixed(3) + "As";
+    document.getElementById("derivative").innerHTML = "Derivative: " + "<br>" + circuit.physics.current_ddt.toFixed(3) + "A/s";
+    document.getElementById("time").innerHTML = "Time: " + "<br>" + circuit.physics.time.toFixed(3) + "s";
 }
 
 function showInputBox(element) {
@@ -359,5 +366,4 @@ function showInputBox(element) {
     }
 }
 
-addPreset(simContainer, 'nswitch');
-setInterval(appPeriodic, 1000);
+setInterval(appPeriodic, 250);

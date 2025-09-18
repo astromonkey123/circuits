@@ -8,6 +8,13 @@ export class Switch extends Element {
         this.state = false;
     }
 
+    update(last_current, current) {
+        this.physics.current = current;
+        this.physics.current_idt += current * this.physics.dt;
+        this.physics.current_ddt = (current - last_current) / this.physics.dt;
+        this.physics.stepTime();
+    }
+
     draw(ctx, showData) {
         ctx.save();
         ctx.translate(this.x, this.y);

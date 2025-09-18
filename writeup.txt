@@ -31,3 +31,5 @@ Now the circuit will be closed iff we reach the starting element sibling
 Now our circuit contains a list of Links, how do we convert that into a delta V function we can guess the current through?
 
 
+
+

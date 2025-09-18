@@ -8,6 +8,14 @@ export class Inductor extends Element {
         this.inductance = inductance;
     }
 
+    update(last_current, current) {
+        this.physics.current = current;
+        this.physics.current_idt += current * this.physics.dt;
+        this.physics.current_ddt = (current - last_current) / this.physics.dt;
+        this.physics.voltage = this.physics.current_ddt * this.inductance;
+        this.physics.stepTime();
+    }
+
     draw(ctx, showData) {
         ctx.save();
         ctx.translate(this.x, this.y);
@@ -31,7 +39,7 @@ export class Inductor extends Element {
         ctx.lineTo(this.width, 0);
         ctx.stroke();
         if (showData) {
-            ctx.fillText(formatValue(this.current_ddt * this.inductance, "V", 1), this.width/2, 20);
+            ctx.fillText(formatValue(this.physics.voltage, "V", 1), this.width/2, 20);
             ctx.fillText(formatValue(this.inductance, "H", 1), this.width/2, 32);
         }
         ctx.restore();
