@@ -56,6 +56,7 @@ class Battery extends Element {
         ctx.translate(-this.width/2, 0);
         ctx.fillStyle = light;
         ctx.strokeStyle = light;
+        ctx.lineWidth = 2;
         ctx.font = "12px serif";
         ctx.beginPath();
         ctx.moveTo(0, 0);
@@ -94,6 +95,7 @@ class Wire extends Element {
         ctx.translate(-this.width/2, 0);
         ctx.fillStyle = light;
         ctx.strokeStyle = light;
+        ctx.lineWidth = 2;
         ctx.font = "12px serif";
         ctx.beginPath();
         ctx.moveTo(this.link1.x - this.x + this.width/2, this.link1.y - this.y);
@@ -117,6 +119,7 @@ class Resistor extends Element {
         ctx.translate(-this.width/2, 0);
         ctx.fillStyle = light;
         ctx.strokeStyle = light;
+        ctx.lineWidth = 2;
         ctx.font = "12px serif";
         const spacing = this.width/11;
         ctx.beginPath();
@@ -154,6 +157,7 @@ class Capacitor extends Element {
         ctx.translate(-this.width/2, 0);
         ctx.fillStyle = light;
         ctx.strokeStyle = light;
+        ctx.lineWidth = 2;
         ctx.font = "12px serif";
         ctx.beginPath();
         ctx.moveTo(0, 0);
@@ -194,6 +198,7 @@ class Inductor extends Element {
         ctx.translate(-this.width/2, 0);
         ctx.fillStyle = light;
         ctx.strokeStyle = light;
+        ctx.lineWidth = 2;
         ctx.font = "12px serif";
         const spacing = this.width/11;
         ctx.beginPath();
@@ -230,6 +235,7 @@ class Switch extends Element {
         ctx.translate(-this.width/2, 0);
         ctx.fillStyle = light;
         ctx.strokeStyle = light;
+        ctx.lineWidth = 2;
         ctx.font = "12px serif";
         ctx.beginPath();
         ctx.moveTo(0, 0);
