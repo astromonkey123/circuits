@@ -11,10 +11,10 @@ help.addEventListener('click', () => showHelpWindow());
 function slideBarWheel(e) {
     total_slide -= e.deltaY;
 
-    if (total_slide > 6) {
-        total_slide = 6;
-    } else if (total_slide < -1375) {
-        total_slide = -1375;
+    if (total_slide > 0) {
+        total_slide = 0;
+    } else if (total_slide < -420) {
+        total_slide = -420;
     }
 
     button_slider.style.left = total_slide + "px";

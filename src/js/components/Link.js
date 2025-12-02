@@ -1,15 +1,12 @@
-import { PhysicsContainer } from "./Container.js";
-import { rainbow, highlight, light, dark } from "../utils/colors.js";
+import { rainbow, highlight, light, dark } from '../utils/colors.js';
 
-export class Link {
-    constructor(x, y, parent, type="normal") {
-        // Sim properties
+class Link {
+    constructor(x, y, parent) {
         this.x = x;
         this.y = y;
         this.parent = parent;
         this.sibling;
         this.radius = 6;
-        this.type = type;
         this.links = [];
     }
 
@@ -50,3 +47,5 @@ export class Link {
         ctx.restore();
     }
 }
+
+export { Link };

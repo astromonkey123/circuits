@@ -1,10 +1,4 @@
-import { Battery } from "../components/elements/Battery.js";
-import { Wire } from "../components/elements/Wire.js";
-import { Resistor } from "../components/elements/Resistor.js";
-import { Inductor } from "../components/elements/Inductor.js";
-import { Capacitor } from "../components/elements/Capacitor.js";
-import { Switch } from "../components/elements/Switch.js";
-import { pMOSFET, nMOSFET } from "../components/elements/MOSFET.js";
+import { Battery, Wire, Resistor, Capacitor, Inductor, Switch } from '../components/Element.js';
 
 function addElement(simContainer, type) {
     if (type == 'battery') {
@@ -19,10 +13,6 @@ function addElement(simContainer, type) {
         addWire(simContainer);
     } else if (type == 'switch') {
         addSwitch(simContainer);
-    } else if (type == 'nmosfet') {
-        addnMOSFET(simContainer);
-    } else if (type == 'pmosfet') {
-        addpMOSFET(simContainer);
     }
     simContainer.updateLinks();
 }
@@ -73,22 +63,6 @@ function addSwitch(simContainer) {
     simContainer.elements.push(new Switch(
         canvas.width/2,
         canvas.height/2
-    ));
-}
-
-function addnMOSFET(simContainer) {
-    simContainer.elements.push(new nMOSFET(
-        canvas.width/2,
-        canvas.height/2 - 50,
-        1
-    ));
-}
-
-function addpMOSFET(simContainer) {
-    simContainer.elements.push(new pMOSFET(
-        canvas.width/2,
-        canvas.height/2 + 50,
-        1
     ));
 }
 

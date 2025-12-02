@@ -1,4 +1,9 @@
-import { simContainer, graphContainer, dt } from './app.js';
+import { Circuit, CircuitData } from '../components/Circuit.js';
+import { SimContainer, GraphContainer } from '../components/Container.js';
+import { Battery, Wire, Resistor, Capacitor, Inductor, Switch } from '../components/Element.js';
+import { Link } from '../components/Link.js';
+
+import { simContainer, graphContainer, dt } from '../app.js';
 import { formatValue } from '../utils/prefixes.js';
 import { rainbow, highlight, light, dark } from '../utils/colors.js';
 

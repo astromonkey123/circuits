@@ -6,11 +6,11 @@
     <title>Circuit Simulator</title>
     <link rel="stylesheet" href="index.css">
     <script src="index.js" defer></script>
-    <script type="module" src="js/core/app.js" defer></script>
+    <script type="module" src="js/app.js" defer></script>
 </head>
 
 <body>
-    <canvas class="graph" id="graph" width="900" height="130"></canvas>
+    <canvas class="graph" id="graph" width="880" height="130"></canvas>
 
     <div class="container">
         <div class="button button-center" id="showData">
@@ -31,7 +31,7 @@
         </div>
     </div>
 
-    <canvas class="canvas" id="canvas" width="690" height="410"></canvas>
+    <canvas class="canvas" id="canvas" width="690" height="400"></canvas>
 
     <div class="button-grid">
         <div class="sliding-cover" id="slider-cover">
@@ -54,38 +54,23 @@
                 <div class="button button-left" id="addSwitch">
                     <h3>Switch</h3>
                 </div>
-                <div class="button button-left" id="addnMOSFET">
-                    <h3>nMOSFET</h3>
-                </div>
-                <div class="button button-left" id="addpMOSFET">
-                    <h3>pMOSFET</h3>
-                </div>
                 <div class="button button-left" id="addSeries">
-                    <h3>Series Preset</h3>
+                    <h3>Series</h3>
                 </div>
                 <div class="button button-left" id="addParallel">
-                    <h3>Parallel Preset</h3>
-                </div>
-                <div class="button button-left" id="addSeriesSwitch">
-                    <h3>Switch Preset</h3>
+                    <h3>Parallel</h3>
                 </div>
                 <div class="button button-left" id="addRC">
-                    <h3>RC Preset</h3>
+                    <h3>RC</h3>
                 </div>
                 <div class="button button-left" id="addRL">
-                    <h3>RL Preset</h3>
+                    <h3>RL</h3>
                 </div>
                 <div class="button button-left" id="addLC">
-                    <h3>LC Preset</h3>
+                    <h3>LC</h3>
                 </div>
                 <div class="button button-left" id="addRLC">
-                    <h3>RLC Preset</h3>
-                </div>
-                <div class="button button-left" id="addnMOSFETSwitch">
-                    <h3>nMOSFET Preset</h3>
-                </div>
-                <div class="button button-left" id="addpMOSFETSwitch">
-                    <h3>pMOSFET Preset</h3>
+                    <h3>RLC</h3>
                 </div>
             </div>
         </div>

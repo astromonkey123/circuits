@@ -15,20 +15,21 @@ body {
 
 .graph {
     z-index: 100;
-    position: absolute;
+    position: relative;
+    float: left;
+    margin-top: 10px; margin-bottom: 10px;
     box-sizing: border-box;
-    top: 10px;
-    border-radius: 25px;
     background-color: var(--panel);
     width: 900px;
     height: 130px;
+    border-radius: 25px;
     box-shadow: 0 0 5px 5px var(--shadow);
 }
 
 .container {
+    position: relative;
     z-index: 100;
-    position: absolute;
-    top: 150px;
+    float: left;
     box-sizing: border-box;
     border-radius: 25px;
     background-color: var(--panel);
@@ -62,53 +63,57 @@ body {
 }
 
 .canvas {
-    position: absolute;
-    top: 150px; left: 210px;
+    position: relative;
+    float: left;
+    margin-left: 10px;
     box-sizing: border-box;
     border-radius: 25px;
     background-color: var(--panel);
     width: 690px;
-    height: 410px;
+    height: 400px;
     box-shadow: 0 0 10px 10px var(--shadow);
 }
 
 .button-grid{
     z-index: 100;
-    position: absolute;
-    top: 570px; left: 210px;
+    position: relative;
+    float: left;
+    margin-top: 10px; margin-left: 10px;
     box-sizing: border-box;
     background-color: var(--panel);
     width: 690px;
-    height: 50px;
+    height: 60px;
     border-radius: 25px;
-    padding: 6px;
+    border-style: solid;
+    border-color: var(--light);
+    border-width: 0px;
     overflow: hidden;
     box-shadow: 0 0 5px 5px var(--shadow);
+    padding-top: 12px;
 }
 
 .sliding-cover {
     position: absolute;
     width: 87%;
-    top: 0; left: 0;
-    padding-top: 8px;
-    height: 50px;
+    margin-top: -12px;
+    padding-top: 12px;
+    height: 60px;
     overflow: hidden;
-    mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 2%, rgba(0,0,0,1) 98%, rgba(0,0,0,0) 100%);
+    mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 5%, rgba(0,0,0,1) 95%, rgba(0,0,0,0) 100%);
 }
 
 .sliding-insert {
+    padding-left: 12px;
     position: absolute;
     width: max-content;
-    left: 6px;
 }
 
 .button {
     font-size: 14px;
     border-radius: 10px;
     padding-left: 15px; padding-right: 15px;
-    height: 34px;
+    height: 35px;
     color: var(--light);
-    background-color: var(--shadow);
     display: flex;
     align-items: center;
     box-sizing: border-box;
@@ -116,13 +121,16 @@ body {
     border-style: solid;
     border-color: var(--light);
     border-width: 1px;
-    padding-top: 2px;
-    transition: box-shadow 0.4s ease;
+    transition: all 0.4s ease;
+}
+
+.button:hover {
+    background-color: var(--highlight);
 }
 
 .button-left {
     float: left;
-    margin-right: 6px;
+    margin-right: 5px;
 }
 
 .button-right {

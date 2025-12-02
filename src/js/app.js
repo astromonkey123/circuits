@@ -1,14 +1,12 @@
-import { Circuit } from '../components/Circuit.js';
-import { Link } from "../components/Link.js";
+import { Circuit, CircuitData } from './components/Circuit.js';
+import { SimContainer, GraphContainer, Selection } from './components/Container.js';
+import { Battery, Wire, Resistor, Capacitor, Inductor, Switch } from './components/Element.js';
+import { Link } from './components/Link.js';
 
-import { Container, DataContainer, GraphContainer, PhysicsContainer, SimContainer } from "../components/Container.js"
-import { Selection } from "../components/Selection.js";
- 
-import { addElement } from '../utils/elements.js';
-import { addPreset } from '../utils/presets.js';
-import { drawGraph } from './graph.js';
-import { simulatePeriodic } from './sim.js';
-import { detect } from "./detect.js";
+import { addElement } from './utils/elements.js';
+import { addPreset } from './utils/presets.js';
+import { drawGraph } from './core/graph.js';
+import { simulatePeriodic } from './core/sim.js';
 
 export const simContainer = new SimContainer('canvas');
 export const graphContainer = new GraphContainer('graph');
@@ -48,20 +46,11 @@ window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('addSwitch').addEventListener('click', () => {
         addElement(simContainer, 'switch');
     });
-    document.getElementById('addnMOSFET').addEventListener('click', () => {
-        addElement(simContainer, 'nmosfet');
-    });
-    document.getElementById('addpMOSFET').addEventListener('click', () => {
-        addElement(simContainer, 'pmosfet');
-    });
     document.getElementById('addSeries').addEventListener('click', () => {
         addPreset(simContainer, 'series');
     });
     document.getElementById('addParallel').addEventListener('click', () => {
         addPreset(simContainer, 'parallel');
-    });
-    document.getElementById('addSeriesSwitch').addEventListener('click', () => {
-        addPreset(simContainer, 'switch');
     });
     document.getElementById('addRC').addEventListener('click', () => {
         addPreset(simContainer, 'rc');
@@ -74,12 +63,6 @@ window.addEventListener('DOMContentLoaded', () => {
     });
     document.getElementById('addRLC').addEventListener('click', () => {
         addPreset(simContainer, 'rlc');
-    });
-    document.getElementById('addnMOSFETSwitch').addEventListener('click', () => {
-        addPreset(simContainer, 'nswitch');
-    });
-    document.getElementById('addpMOSFETSwitch').addEventListener('click', () => {
-        addPreset(simContainer, 'pswitch');
     });
     document.getElementById('clearCanvas').addEventListener('click', () => {
         const clear_text = document.getElementById('clearCanvasText');
@@ -283,39 +266,33 @@ cancel_button.addEventListener('click', () => {
 
 function appPeriodic() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    detect();
-
-    // if (simContainer.isSimulating) {
-    //     simulatePeriodic();
-    // }
-
     drawObjects();
-    // displayInfo();
-    // drawGraph();
+    if (simContainer.isSimulating) {
+        simulatePeriodic();
+    }
+    display_info();
+    drawGraph();
 }
 
 function drawObjects() {
     for (let element of simContainer.elements) {
         element.draw(ctx, simContainer.showData);
     }
-
     for (let link of simContainer.links) {
         link.draw(ctx);
         link.findLinks(simContainer);
     }
-
     simContainer.selection.draw(ctx);
 }
 
-function displayInfo() {
+function display_info() {
     if (simContainer.circuits.length === 0) return;
 
     let circuit = simContainer.circuits[0];
-    document.getElementById("current").innerHTML = "Current: " + "<br>" + circuit.physics.current.toFixed(3) + "A";
-    document.getElementById("integral").innerHTML = "Integral: " + "<br>" + circuit.physics.current_idt.toFixed(3) + "As";
-    document.getElementById("derivative").innerHTML = "Derivative: " + "<br>" + circuit.physics.current_ddt.toFixed(3) + "A/s";
-    document.getElementById("time").innerHTML = "Time: " + "<br>" + circuit.physics.time.toFixed(3) + "s";
+    document.getElementById("current").innerHTML = "Current: " + "<br>" + circuit.current.toFixed(3) + "A";
+    document.getElementById("integral").innerHTML = "Integral: " + "<br>" + circuit.current_idt.toFixed(3) + "As";
+    document.getElementById("derivative").innerHTML = "Derivative: " + "<br>" + circuit.current_ddt.toFixed(3) + "A/s";
+    document.getElementById("time").innerHTML = "Time: " + "<br>" + circuit.elapsed_time.toFixed(3) + "s";
 }
 
 function showInputBox(element) {
@@ -366,4 +343,4 @@ function showInputBox(element) {
     }
 }
 
-setInterval(appPeriodic, 250);
+setInterval(appPeriodic, 10);

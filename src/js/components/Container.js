@@ -1,6 +1,3 @@
-import { Selection } from "./Selection.js";
-import { dt } from "../core/app.js";
-
 class Container {
     constructor(id) {
         this.canvas = document.getElementById(id);
@@ -8,10 +5,35 @@ class Container {
     }
 }
 
-class DataContainer {
-    constructor() {
-        this.times = [0];
-        this.currents = [0];
+class SimContainer extends Container {
+    constructor(id) {
+        super(id);
+        this.circuits = [];
+        this.elements = [];
+        this.links = [];
+        this.editing = null;
+        this.dragging = null;
+        this.offsets = {x: 0, y: 0, rotation: 0};
+        this.showData = true;
+        this.selection = new Selection();
+        this.isSimulating = true;
+    }
+
+    updateLinks() {
+        this.links = [];
+        for (const element of this.elements) {
+            this.links.push(element.link1);
+            this.links.push(element.link2);
+        }
+    }
+
+    resetFields() {
+        this.circuits = [];
+        this.elements = [];
+        this.links = [];
+        this.editing = null;
+        this.dragging = null;
+        this.selection = new Selection();
     }
 }
 
@@ -36,54 +58,56 @@ class GraphContainer extends Container {
     }
 }
 
-class PhysicsContainer {
-    constructor(current = 0, current_idt = 0, current_ddt = 0, time = 0, voltage = 0) {
-        this.current = current;
-        this.current_idt = current_idt;
-        this.current_ddt = current_ddt;
-        this.voltage = voltage;
-        this.time = time;
-        this.dt = dt;
+class Selection {
+    constructor() {
+        this.x = 0;
+        this.y = 0;
+        this.w = 0;
+        this.h = 0;
+        this.isActive = false;
+        this.objects = [];
     }
 
-    stepTime() {
-        this.time += this.dt;
-    }
-}
-
-class SimContainer extends Container {
-    constructor(id) {
-        super(id);
-        this.circuits = [];
-        this.elements = [];
-        this.links = [];
-        this.editing = null;
-        this.dragging = null;
-        this.offsets = {x: 0, y: 0, rotation: 0};
-        this.showData = true;
-        this.selection = new Selection();
-        this.isSimulating = true;
-    }
-
-    updateLinks() {
-        this.links = [];
-        for (const element of this.elements) {
-            this.links.push(element.link1);
-            this.links.push(element.link2);
-            if (element.gate != null) {
-                this.links.push(element.gate);
-            }
+    setPosition(x, y) {
+        const dx = x - this.x;
+        const dy = y - this.y;
+        this.x = x;
+        this.y = y;
+        for (const object of this.objects) {
+            object.setPosition(object.x + dx, object.y + dy);
         }
     }
 
-    resetFields() {
-        this.circuits = [];
-        this.elements = [];
-        this.links = [];
-        this.editing = null;
-        this.dragging = null;
-        this.selection = new Selection();
+    containsPoint(x, y) {
+        let inXRange = false;
+        let inYRange = false;
+    
+        if (x >= Math.min(this.x, this.x + this.w) && x <= Math.max(this.x, this.x + this.w)) {
+            inXRange = true;
+        }
+        if (y >= Math.min(this.y, this.y + this.h) && y <= Math.max(this.y, this.y + this.h)) {
+            inYRange = true;
+        }
+
+        if (inXRange && inYRange) {
+            return true;
+        }
+        return false;
+    }
+
+    draw(ctx) {
+        if (this.objects.length != 0 || this.isActive) {
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.fillStyle = "rgb(255 255 255 / 10%)";
+            ctx.strokeStyle = 'white';
+            ctx.beginPath();
+            ctx.fillRect(0, 0, this.w, this.h);
+            ctx.rect(0, 0, this.w, this.h);
+            ctx.stroke();
+            ctx.restore();
+        }
     }
 }
 
-export { Container, DataContainer, GraphContainer, PhysicsContainer, SimContainer }
+export { SimContainer, GraphContainer, Selection };
