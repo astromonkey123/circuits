@@ -13,8 +13,8 @@ function slideBarWheel(e) {
 
     if (total_slide > 0) {
         total_slide = 0;
-    } else if (total_slide < -420) {
-        total_slide = -420;
+    } else if (total_slide < -410) {
+        total_slide = -410;
     }
 
     button_slider.style.left = total_slide + "px";

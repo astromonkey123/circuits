@@ -83,26 +83,10 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     });
     document.getElementById('showData').addEventListener('click', () => {
-        const show_text = document.getElementById('showDataText');
-
-        if (show_text.innerHTML === "Hide Details") {
-            show_text.innerHTML = "Show Details"
-            simContainer.showData = false;
-        } else if (show_text.innerHTML === "Show Details") {
-            show_text.innerHTML = "Hide Details"
-            simContainer.showData = true;
-        }
+        simContainer.showData = !simContainer.showData;
     });
     document.getElementById('runSimulation').addEventListener('click', () => {
-        const run_text = document.getElementById('runSimulationText');
-
-        if (run_text.innerHTML === "Pause Simulation") {
-            run_text.innerHTML = "Play Simulation"
-            simContainer.isSimulating = false;
-        } else if (run_text.innerHTML === "Play Simulation") {
-            run_text.innerHTML = "Pause Simulation"
-            simContainer.isSimulating = true;
-        }
+        simContainer.isSimulating = !simContainer.isSimulating;
     });
 
     document.addEventListener('keydown', (e) => {
