@@ -53,7 +53,7 @@ class GraphContainer extends Container {
         } else if (limit < this.height_increment) {
             this.height_scale = 1 / ( Math.pow(2, Math.ceil( Math.log2( limit ) ) ) );
         } else {
-            this.height_scale = 1 / ( Math.ceil( limit / this.height_increment ) * this.height_increment );
+            this.height_scale = 1 / Math.pow(this.height_increment, Math.ceil(Math.log(limit)/Math.log(this.height_increment)));            
         }
     }
 }
