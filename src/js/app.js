@@ -1,12 +1,12 @@
-import { Circuit, CircuitData } from '../components/Circuit.js';
-import { SimContainer, GraphContainer, Selection } from '../components/Container.js';
-import { Battery, Wire, Resistor, Capacitor, Inductor, Switch } from '../components/Element.js';
-import { Link } from '../components/Link.js';
+import { Circuit, CircuitData } from './components/Circuit.js';
+import { SimContainer, GraphContainer, Selection } from './components/Container.js';
+import { Battery, Wire, Resistor, Capacitor, Inductor, Switch } from './components/Element.js';
+import { Link } from './components/Link.js';
 
-import { addElement } from '../utils/elements.js';
-import { addPreset } from '../utils/presets.js';
-import { drawGraph } from './graph.js';
-import { simulatePeriodic } from './sim.js';
+import { addElement } from './utils/elements.js';
+import { addPreset } from './utils/presets.js';
+import { drawGraph } from './core/graph.js';
+import { simulatePeriodic } from './core/sim.js';
 
 export const simContainer = new SimContainer('canvas');
 export const graphContainer = new GraphContainer('graph');
@@ -52,9 +52,6 @@ window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('addParallel').addEventListener('click', () => {
         addPreset(simContainer, 'parallel');
     });
-    document.getElementById('addSeriesSwitch').addEventListener('click', () => {
-        addPreset(simContainer, 'switch');
-    });
     document.getElementById('addRC').addEventListener('click', () => {
         addPreset(simContainer, 'rc');
     });
@@ -86,26 +83,10 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     });
     document.getElementById('showData').addEventListener('click', () => {
-        const show_text = document.getElementById('showDataText');
-
-        if (show_text.innerHTML === "Hide Details") {
-            show_text.innerHTML = "Show Details"
-            simContainer.showData = false;
-        } else if (show_text.innerHTML === "Show Details") {
-            show_text.innerHTML = "Hide Details"
-            simContainer.showData = true;
-        }
+        simContainer.showData = !simContainer.showData;
     });
     document.getElementById('runSimulation').addEventListener('click', () => {
-        const run_text = document.getElementById('runSimulationText');
-
-        if (run_text.innerHTML === "Pause Simulation") {
-            run_text.innerHTML = "Play Simulation"
-            simContainer.isSimulating = false;
-        } else if (run_text.innerHTML === "Play Simulation") {
-            run_text.innerHTML = "Pause Simulation"
-            simContainer.isSimulating = true;
-        }
+        simContainer.isSimulating = !simContainer.isSimulating;
     });
 
     document.addEventListener('keydown', (e) => {

@@ -3,7 +3,7 @@ import { SimContainer, GraphContainer } from '../components/Container.js';
 import { Battery, Wire, Resistor, Capacitor, Inductor, Switch } from '../components/Element.js';
 import { Link } from '../components/Link.js';
 
-import { simContainer, graphContainer, dt } from './app.js';
+import { simContainer, graphContainer, dt } from '../app.js';
 import { formatValue } from '../utils/prefixes.js';
 import { rainbow, highlight, light, dark } from '../utils/colors.js';
 
@@ -12,7 +12,7 @@ function drawGraph() {
     const ctx = graphContainer.ctx;
 
     for (const circuit of simContainer.circuits) {
-        while (circuit.data.currents.length > graphContainer.num_times * ( 3/4 )) {
+        while (circuit.data.currents.length > graphContainer.num_times * (3/4)) {
             circuit.data.currents.shift();
             circuit.data.times.shift();
         }
@@ -39,6 +39,11 @@ function drawGraph() {
     ctx.save();
     ctx.translate(0, graph.height/2);
     for (let h = -graph.height/3; h <= graph.height/3; h += graph.height/6) {
+        if (h == 0) {
+            ctx.lineWidth = 1.5;
+        } else {
+            ctx.lineWidth = 0.5;
+        }
         ctx.beginPath();
         ctx.moveTo(0, h);
         ctx.lineTo(graph.width * (3/4), h);
@@ -59,16 +64,20 @@ function drawGraph() {
     ctx.beginPath();
     ctx.fillStyle = light;
     ctx.strokeStyle = light;
-    ctx.font = "18px serif";
-    for (let time_step = 0; time_step < 4; time_step ++) {
-        const position = time_step * 250 * graphContainer.spacing;
-        if (time_step != 3) {
-            ctx.beginPath();
-            ctx.moveTo(max_width - position, graph.height/2);
-            ctx.lineTo(max_width - position, -graph.height/2);
-            ctx.stroke();
+    ctx.font = "18px sans-serif";
+    for (let time_step = 0; time_step < 3; time_step ++) {
+        if (time_step == 0) {
+            ctx.lineWidth = 1.5;
+        } else {
+            ctx.lineWidth = 0.5;
         }
-        ctx.fillText("t+" + (time_step * 250 * dt).toFixed(2) + "s", max_width - position + 4, graph.height/2 - 4);
+        const position = time_step * 250 * graphContainer.spacing;
+        ctx.beginPath();
+        ctx.moveTo(max_width - position, 3*graph.height/6);
+        ctx.lineTo(max_width - position, -3*graph.height/6);
+        ctx.stroke();
+        ctx.textAlign = "right";
+        ctx.fillText((time_step * 250 * dt).toFixed(2) + "s", max_width - position - 4, graph.height/2 - 4);
     }
 
     ctx.restore();
@@ -81,7 +90,8 @@ function drawGraph() {
     ctx.fillStyle = light;
     ctx.strokeStyle = light;
     ctx.font = "18px serif";
-    ctx.fillText( display_text, 6, -graph.height/2 + 18 );
+    ctx.textAlign = "right";
+    ctx.fillText(display_text, graph.width * (3/4) - 4, -graph.height/2 + 18 );
     ctx.restore();
 }
 
@@ -105,25 +115,19 @@ function plot(ctx, times, currents, max_width, i) {
     ctx.save();
     ctx.translate(max_width, getHeight( currents.at(-1) ));
     ctx.font = "18px serif";
-    ctx.fillText(formatValue(currents.at(-1), "A", 3), 6, graph.height/2 + 5);
+    ctx.textAlign = "left";
+    const offset = graph.width * (1/4) / 3;
+    ctx.fillText(formatValue(currents.at(-1), "A", 2), 6 + (i % 3) * offset, graph.height/2 + 5);
     ctx.restore();
     ctx.lineWidth = 1;
 }
 
 function formatCurrent(current) {
-    let display_text = "";
-
     if (current == Infinity) {
-        display_text = "0A";
-    } else if (current <= 1e12 && current >= 1e-12) {
-        display_text = formatValue(current, "A", null);
+        return "0A";
     } else {
-        const scaling = ( 1 / (graphContainer.height_scale *  (Math.pow(10, Math.floor( Math.log10( current ) ) ) ) ) ).toFixed(3)
-        const exponential = Math.floor( Math.log10( current ) );
-        display_text = scaling + "e" + exponential + "A";
+        return formatValue(current, "A", null);
     }
-
-    return display_text;
 }
 
 export { drawGraph };
