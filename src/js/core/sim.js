@@ -1,230 +1,188 @@
 import { Circuit, CircuitData } from '../components/Circuit.js';
 import { SimContainer, GraphContainer } from '../components/Container.js';
 import { Battery, Wire, Resistor, Capacitor, Inductor, Switch } from '../components/Element.js';
-import { Link } from '../components/Link.js';
+import { Node } from '../components/Node.js';
 
 import { simContainer, graphContainer, dt } from '../app.js';
 
 function simulatePeriodic() {
-    updateCircuits();
-    updateMemberCircuits();
-    simulateTimeStep()
-
-    for (const element of simContainer.elements) {
-        stepElement(element);
-    }
-}
-
-function updateCircuits() {
-    const found_circuits = findCircuits(simContainer.elements);
-
-    const revised_circuits = removeDuplicates(found_circuits, simContainer.circuits);
-
-    simContainer.circuits = revised_circuits
-}
-
-function findCircuits(elements) {
-    let circuits = [];
+    const all_circuits = findCircuits(simContainer.elements); // All existing circuits
+    const circuits = checkCircuits(simContainer.circuits, all_circuits); // Filtered for duplicates, priority to preexisting
+    simContainer.circuits = circuits;
+    console.log(simContainer.circuits);
     
-    for (let start_element of elements) {        
-        let circuit = findLoop([start_element], [false], start_element.link1, 0);
+    updateMembership(); // Update the list of circuits for each element
 
-        if (circuit !== null) circuits.push(circuit);
-    }
-
-    return circuits;
-}
-
-function findLoop(loop, directions, current_node, iter) {
-    if (iter > 10) return null;
-    if (current_node.links.length == 0) return null;
-
-    // Base case
-    if (loop.length > 0) {
-        if (current_node.links.includes(loop[0].link2)) {
-            return new Circuit(loop, directions);
-        }
-    }
-
-    const next_node = current_node.links[0].sibling;
-    const next_direction = (next_node == next_node.parent.link2);
-
-    const new_loop = [...loop, next_node.parent];
-    const new_directions = [...directions, next_direction];
-
-    // Recursion
-    return findLoop(new_loop, new_directions, next_node, iter+1);
-}
-
-function removeDuplicates(found_circuits, existing_circuits) {
-    let circuits = [];
-
-    // Add existing circuits that have been found
-    for (const existing_circuit of existing_circuits) {
-        let isFound = false;
-
-        for (const found_circuit of found_circuits) {
-            isFound = isFound || hasSameElements(found_circuit, existing_circuit);
-        }
-
-        if (isFound) circuits.push(existing_circuit);
-    }
-
-    // Add new circuits that don't previously exist
-    for (const found_circuit of found_circuits) {
-        let alreadyExists = false;
-
-        for (const circuit of circuits) {
-            alreadyExists = alreadyExists || hasSameElements(found_circuit, circuit);
-        }
-
-        if (!alreadyExists) circuits.push(found_circuit);
-    }
-
-    return circuits;
-}
-
-function hasSameElements(circuit_1, circuit_2) {
-    const checkContainment = (loop_1, loop_2) => {
-        for (let element of loop_1) {
-            if (!loop_2.includes(element)) return false;
-        }
-
-        return true;
-    };
-
-    return checkContainment(circuit_1.elements, circuit_2.elements) && checkContainment(circuit_2.elements, circuit_1.elements);
-}
-
-function updateMemberCircuits() {
-    // Go through each element and reset it's circuit list
-    for (const element of simContainer.elements) {
-        element.circuits = [];
-    }
-
-    // Go through each circuit and add itself to the circuit list of each element
     for (const circuit of simContainer.circuits) {
-        for (const element of circuit.elements) {
-            element.circuits.push(circuit);
-        }
-    }
-}
+        const last_current = circuit.current;
+    
+        const current = findCurrent(circuit); // Find the current for the circuit
 
-function simulateTimeStep() {
-    let previous_currents = [];
-    let previous_integrals = [];
-    for (let circuit of simContainer.circuits) {
-        previous_currents.push(circuit.current);
-        previous_integrals.push(circuit.current_idt);
-    }
-
-    // Recalculate current five times for accuracy
-    for (let i = 0; i < simContainer.circuits.length; i++) {
-        let circuit = simContainer.circuits[i];   
-        let current = stepCircuit(circuit);
-
+        // Update current
         circuit.current = current;
-        circuit.current_ddt = (current - previous_currents[i]) / dt;
-        circuit.current_idt = previous_integrals[i] + ( current * dt );
-    }
+        circuit.current_idt += current * dt;
+        circuit.current_ddt = (current - last_current) / dt;
 
-    for (let circuit of simContainer.circuits) {
+        // Update the circuit data for graphing
         circuit.elapsed_time = (Math.round(circuit.elapsed_time / dt) * dt) + dt;
         circuit.data.currents.push(circuit.current);
         circuit.data.times.push(circuit.elapsed_time);
     }
+
+    resetElements(simContainer.elements);
+    updateElements(simContainer.circuits);
 }
 
-function stepCircuit(circuit){
-    let delta_v_functions = [];
+function findCircuits(elements) {
+    const circuits = []
+    for (const element of elements) {
+        const loop = findLoop([element.node0], 0);
+        if (loop == null) continue;
+        circuits.push(new Circuit(loop));
+    }
+    return circuits;
+}
 
-    for (let i = 0; i < circuit.elements.length; i++) {
-        const element = circuit.elements[i];
-        const direction = circuit.directions[i];
-        if (element.type == 'battery') {
-            
-            if (direction) {
-                delta_v_functions.push(current => -element.emf);
-            } else {
-                delta_v_functions.push(current => element.emf);
+function findLoop(loop, iters) {
+    const last_node = loop[loop.length-1];
+    const next_node = last_node.nodes[0];
+    // Base cases
+    if (iters > 100) return null; // To prevent it from going insane
+    if (next_node == null) return null; // If there's no next node
+    for (const node of last_node.nodes) {
+        if (node.parent.nodes.includes(loop[0])) return loop; // If the loop is complete
+    }
+    // Recursion
+    loop.push(next_node.getSibling());
+    return findLoop(loop, iters+1);
+}
+
+function checkCircuits(existing_circuits, all_circuits) {
+    const circuits = [];
+
+    // Add existing circuits (that still exist) to the list
+    for (const existing_circuit of existing_circuits) {
+        let found = false;
+        for (const new_circuit of all_circuits) {
+            if (existing_circuit.hasSameElements(new_circuit)) {
+                found = true;
+                break;
             }
+        }
+        if (found) circuits.push(existing_circuit);
+    }
 
-        } else if (element.type == 'resistor') {
+    // Add unique new circuits to the list
+    for (const new_circuit of all_circuits) {
+        let exists = false;
+        for (const circuit of circuits) {
+            if (circuit.hasSameElements(new_circuit)) {
+                exists = true;
+                break;
+            }
+        }
+        if (!exists) circuits.push(new_circuit);
+    }
+
+    return circuits;
+}
+
+function updateMembership() {
+    for (const element of simContainer.elements) {
+        element.circuits = [];
+        element.circuits_id = [];
+    }
+    for (const circuit of simContainer.circuits) {
+        for (const element_id of circuit.elements_id) {
+            element_id[0].circuits.push(circuit);
+            element_id[0].circuits_id.push([circuit, element_id[1]]);
+        }
+    }
+}
+
+function findCurrent(circuit) {
+    const last_current = circuit.current;
+    const last_integral = circuit.current_idt;
+
+    const voltages = [];
+    for (const node of circuit.nodes) {
+        const element = node.parent;
+        // Battery
+        if (element.type == "battery") {
+            voltages.push(current => element.emf);
+
+        // Resistor
+        } else if (element.type == "resistor") {
             let other_currents = 0;
-
-            for (let other_circuit of element.circuits) {
-                if (circuit == other_circuit) { continue }
-                other_currents += other_circuit.current;
+            for (const other_circuit_id of element.circuits_id) {
+                // console.log(other_circuit_id);
+                const other_circuit = other_circuit_id[0];
+                const other_id = other_circuit_id[1];
+                if (circuit == other_circuit) continue;
+                other_currents += -other_circuit.current * Math.sign(other_id);
             }
+            voltages.push(current => (other_currents + current) * element.resistance * Math.sign(node.id));
 
-            delta_v_functions.push(current => -(other_currents + current) * element.resistance);
+        // Capacitor
+        } else if (element.type == "capacitor") {
+            voltages.push(current => -element.current_idt / element.capacitance * Math.sign(node.id));
 
-        } else if (element.type == 'inductor') {
+        // Inductor
+        } else if (element.type == "inductor") {
             let other_derivatives = 0;
-
-            for (let other_circuit of element.circuits) {
-                if (circuit == other_circuit) { continue }
-                other_derivatives += other_circuit.current_ddt;
+            for (const other_circuit_id of element.circuits_id) {
+                const other_circuit = other_circuit_id[0];
+                const other_id = other_circuit_id[1];
+                if (circuit == other_circuit) continue;
+                other_derivatives += other_circuit.current_ddt * Math.sign(other_id);
             }
+            voltages.push(current => (other_derivatives + ((current - last_current)/dt)) * element.inductance * Math.sign(node.id));
 
-            delta_v_functions.push(current => -( other_derivatives + ( (current - circuit.current) / dt ) ) * element.inductance);
-        
-        } else if (element.type == 'capacitor') {
-
-            delta_v_functions.push(current => -element.current_idt / element.capacitance);
-    
+        // Switch
         } else if (element.type == 'switch') {
-            
             if (!element.state) return 0;
-        
         }
     }
 
-    function delta_v(current) {
-        let total_delta_v = 0;
-        for (let delta_v_function of delta_v_functions) {
-            total_delta_v += delta_v_function(current);
+    function loop_voltage(current) {
+        let total_voltage = 0;
+        for (const voltage of voltages) {
+            total_voltage += voltage(current);
         }
-        return total_delta_v;
+        return total_voltage;
     }
 
-    const slope = (delta_v(1) - delta_v(0));
-    const current = delta_v(0) / -slope;
+    if (loop_voltage(1) == 0 && loop_voltage(0) == 0) return 0;
 
-    return current
+    const slope = loop_voltage(1) - loop_voltage(0)
+    const current = -loop_voltage(0) / slope;
+    
+    return current;
 }
 
-function stepElement(element) {
-    if (element.circuits.length == 0) {
+function resetElements(elements) {
+    for (const element of elements) {
         if (element.type == 'resistor') {
             element.current = 0;
         } else if (element.type == 'inductor') {
             element.current_ddt = 0;
-        } else if (element.type == 'capacitor') {
-            element.current_idt = element.current_idt;
         }
-        return null;
-    }
-
-    if (element.type == 'resistor') {
-        element.current = 0;
-        for (let circuit of element.circuits) {
-            element.current += circuit.current;
-        }
-
-    } else if (element.type == 'inductor') {
-        element.current_ddt = 0;
-        for (let circuit of element.circuits) {
-            element.current_ddt += circuit.current_ddt;
-        }
-
-    } else if (element.type == 'capacitor') {
-        // element.current_idt = 0;
-        for (let circuit of element.circuits) {
-            element.current_idt += circuit.current * dt;
-        }
-
     }
 }
 
-export { simulatePeriodic }
+function updateElements(circuits) {
+    for (const circuit of circuits) {
+        for (const node of circuit.nodes) {
+            const element = node.parent;
+            if (element.type == 'resistor') {
+                element.current += circuit.current * Math.sign(node.id);
+            } else if (element.type == 'inductor') {
+                element.current_ddt += circuit.current_ddt * Math.sign(node.id);
+            } else if (element.type == 'capacitor') {
+                element.current_idt += circuit.current * dt * Math.sin(node.id);
+            }
+        }
+    }
+}
+
+export { simulatePeriodic };

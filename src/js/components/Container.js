@@ -10,7 +10,7 @@ class SimContainer extends Container {
         super(id);
         this.circuits = [];
         this.elements = [];
-        this.links = [];
+        this.nodes = [];
         this.editing = null;
         this.dragging = null;
         this.offsets = {x: 0, y: 0, rotation: 0};
@@ -20,17 +20,18 @@ class SimContainer extends Container {
     }
 
     updateLinks() {
-        this.links = [];
+        this.nodes = [];
         for (const element of this.elements) {
-            this.links.push(element.link1);
-            this.links.push(element.link2);
+            for (const node of element.nodes) {
+                this.nodes.push(node);
+            }
         }
     }
 
     resetFields() {
         this.circuits = [];
         this.elements = [];
-        this.links = [];
+        this.nodes = [];
         this.editing = null;
         this.dragging = null;
         this.selection = new Selection();

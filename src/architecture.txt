@@ -1,0 +1,18 @@
+So each element has some number of nodes related to its function
+For simplification for now let's only deal with elements with 2 nodes
+
+We call the element the parent
+The nodes are the children
+If one element has multiple nodes, then those nodes are siblings
+Each node is assigned a number
+If a node has the number n, then there also exists a node with number -n
+This is considering the node's primary sibling, and all other nodes are secondary siblings
+
+The direction of the component is determined by which node appears first.
+If a negative node apprears first, then that element is backwards.
+
+Simulation Loop:
+
+1. Find all loops
+2. Update loop list
+3. Simulate time step

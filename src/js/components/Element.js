@@ -1,4 +1,4 @@
-import { Link } from './Link.js';
+import { Node } from './Node.js';
 import { formatValue } from '../utils/prefixes.js';
 import { rainbow, highlight, light, dark } from '../utils/colors.js';
 
@@ -9,11 +9,11 @@ class Element {
         this.type = type;
         this.rotation = 0;
         this.width = 100;
-        this.link1 = new Link(x - (Math.cos(this.rotation) * this.width/2), y - (Math.sin(this.rotation) * this.width/2), this)
-        this.link2 = new Link(x + (Math.cos(this.rotation) * this.width/2), y + (Math.sin(this.rotation) * this.width/2), this)
-        this.link1.sibling = this.link2;
-        this.link2.sibling = this.link1;        
+        this.node0 = new Node(x - (Math.cos(this.rotation) * this.width/2), y - (Math.sin(this.rotation) * this.width/2), this, 1)
+        this.node1 = new Node(x + (Math.cos(this.rotation) * this.width/2), y + (Math.sin(this.rotation) * this.width/2), this, -1)     
+        this.nodes = [this.node0, this.node1];
         this.circuits = [];
+        this.circuits_id = [];
     }
 
     containsPoint(x, y) {
@@ -23,19 +23,19 @@ class Element {
     setPosition(x, y) {
         this.x = x;
         this.y = y;
-        this.link1.x = this.x - (Math.cos(this.rotation) * this.width/2);
-        this.link1.y = this.y - (Math.sin(this.rotation) * this.width/2);
-        this.link2.x = this.x + (Math.cos(this.rotation) * this.width/2);
-        this.link2.y = this.y + (Math.sin(this.rotation) * this.width/2);
+        this.node0.x = this.x - (Math.cos(this.rotation) * this.width/2);
+        this.node0.y = this.y - (Math.sin(this.rotation) * this.width/2);
+        this.node1.x = this.x + (Math.cos(this.rotation) * this.width/2);
+        this.node1.y = this.y + (Math.sin(this.rotation) * this.width/2);
     }
 
     setRotation(rotation) {
         if (this.type == 'wire') return;
         this.rotation = rotation;
-        this.link1.x = this.x - (Math.cos(this.rotation) * this.width/2);
-        this.link1.y = this.y - (Math.sin(this.rotation) * this.width/2);
-        this.link2.x = this.x + (Math.cos(this.rotation) * this.width/2);
-        this.link2.y = this.y + (Math.sin(this.rotation) * this.width/2);
+        this.node0.x = this.x - (Math.cos(this.rotation) * this.width/2);
+        this.node0.y = this.y - (Math.sin(this.rotation) * this.width/2);
+        this.node1.x = this.x + (Math.cos(this.rotation) * this.width/2);
+        this.node1.y = this.y + (Math.sin(this.rotation) * this.width/2);
     }
 
     draw(ctx, showData) {
@@ -84,8 +84,8 @@ class Battery extends Element {
 class Wire extends Element {
     constructor(x1, y1, x2, y2) {
         super(x1, y1, 'wire');
-        this.link1.setPosition(x1, y1);
-        this.link2.setPosition(x2, y2);
+        this.node0.setPosition(x1, y1);
+        this.node1.setPosition(x2, y2);
     }
 
     draw(ctx, showData) {
@@ -98,8 +98,8 @@ class Wire extends Element {
         ctx.lineWidth = 2;
         ctx.font = "12px serif";
         ctx.beginPath();
-        ctx.moveTo(this.link1.x - this.x + this.width/2, this.link1.y - this.y);
-        ctx.lineTo(this.link2.x - this.x + this.width/2, this.link2.y - this.y);
+        ctx.moveTo(this.node0.x - this.x + this.width/2, this.node0.y - this.y);
+        ctx.lineTo(this.node1.x - this.x + this.width/2, this.node1.y - this.y);
         ctx.stroke();
         ctx.restore();
     }

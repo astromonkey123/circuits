@@ -1,7 +1,7 @@
 import { Circuit, CircuitData } from './components/Circuit.js';
 import { SimContainer, GraphContainer, Selection } from './components/Container.js';
 import { Battery, Wire, Resistor, Capacitor, Inductor, Switch } from './components/Element.js';
-import { Link } from './components/Link.js';
+import { Node } from './components/Node.js';
 
 import { addElement } from './utils/elements.js';
 import { addPreset } from './utils/presets.js';
@@ -121,11 +121,11 @@ canvas.addEventListener('mousedown', (e) => {
 
     for (let element of simContainer.elements) {
         if (element.type == 'wire') {
-            if (element.link1.containsPoint(mouseX, mouseY)) {
-                simContainer.dragging = element.link1;
+            if (element.node0.containsPoint(mouseX, mouseY)) {
+                simContainer.dragging = element.node0;
                 return null;
-            } else if (element.link2.containsPoint(mouseX, mouseY)) {
-                simContainer.dragging = element.link2;
+            } else if (element.node1.containsPoint(mouseX, mouseY)) {
+                simContainer.dragging = element.node1;
                 return null;
             }
         } else {
@@ -184,7 +184,7 @@ canvas.addEventListener('mousemove', (e) => {
 
     if (simContainer.dragging instanceof Selection) {
         simContainer.dragging.setPosition(mouseX - simContainer.offsets.x, mouseY - simContainer.offsets.y);
-    } else if (simContainer.dragging instanceof Link) {
+    } else if (simContainer.dragging instanceof Node) {
         simContainer.dragging.setPosition(mouseX, mouseY);
     } else if (simContainer.dragging != null) {
         if (e.shiftKey) {
@@ -207,11 +207,11 @@ canvas.addEventListener('mouseup', () => {
     if (simContainer.selection.isActive) {
         for (const element of simContainer.elements) {
             if (element.type == 'wire') {
-                if (simContainer.selection.containsPoint(element.link1.x, element.link1.y)) {
-                    simContainer.selection.objects.push(element.link1);
+                if (simContainer.selection.containsPoint(element.node0.x, element.node0.y)) {
+                    simContainer.selection.objects.push(element.node0);
                 }
-                if (simContainer.selection.containsPoint(element.link2.x, element.link2.y)) {
-                    simContainer.selection.objects.push(element.link2);
+                if (simContainer.selection.containsPoint(element.node1.x, element.node1.y)) {
+                    simContainer.selection.objects.push(element.node1);
                 }
             } else {
                 if (simContainer.selection.containsPoint(element.x, element.y)) {
@@ -259,12 +259,12 @@ function appPeriodic() {
 }
 
 function drawObjects() {
-    for (let element of simContainer.elements) {
+    for (const element of simContainer.elements) {
         element.draw(ctx, simContainer.showData);
     }
-    for (let link of simContainer.links) {
-        link.draw(ctx);
-        link.findLinks(simContainer);
+    for (const node of simContainer.nodes) {
+        node.draw(ctx);
+        node.findNodes(simContainer);
     }
     simContainer.selection.draw(ctx);
 }
@@ -327,4 +327,4 @@ function showInputBox(element) {
     }
 }
 
-setInterval(appPeriodic, 10);
+setInterval(appPeriodic, 100);
