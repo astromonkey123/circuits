@@ -16,3 +16,21 @@ Simulation Loop:
 1. Find all loops
 2. Update loop list
 3. Simulate time step
+
+For inverted elements, the current must be transformed, as well as the voltage.
+
+So for a resistor, if it's positively oriented, then
+V_proper = (current * 1) * resistance
+V_actual = V_proper * 1
+
+But if it's negatively oriented,
+V_proper = (current * -1) * resistance
+V_actual = V_proper * -1
+
+Likewise for a positively oriented capacitor
+V_proper = (stored_charge + current * 1 * dt) / capacitance
+V_actual = V_proper * 1
+
+And for a negatively oriented capacitor
+V_proper = (stored_charge + current * -1 * dt) / capacitance
+V_actual = V_proper * -1

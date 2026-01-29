@@ -109,34 +109,54 @@ function findCurrent(circuit) {
         const element = node.parent;
         // Battery
         if (element.type == "battery") {
-            voltages.push(current => element.emf);
+            voltages.push(current => element.emf * Math.sign(node.id));
 
         // Resistor
         } else if (element.type == "resistor") {
             let other_currents = 0;
-            for (const other_circuit_id of element.circuits_id) {
-                // console.log(other_circuit_id);
-                const other_circuit = other_circuit_id[0];
-                const other_id = other_circuit_id[1];
-                if (circuit == other_circuit) continue;
-                other_currents += -other_circuit.current * Math.sign(other_id);
+            // for (const other_circuit_id of element.circuits_id) {
+            //     const other_circuit = other_circuit_id[0];
+            //     const other_id = other_circuit_id[1];
+            //     if (circuit == other_circuit) continue;
+            //     other_currents += -other_circuit.current * Math.sign(other_id);
+            // }
+            function voltage(current) {
+                const relative_current = current * Math.sign(node.id);
+                const relative_voltage = relative_current * element.resistance;
+                const absolute_voltage = relative_voltage * Math.sign(node.id);
+                return absolute_voltage
             }
-            voltages.push(current => (other_currents + current) * element.resistance * Math.sign(node.id));
+            voltages.push(voltage);
 
         // Capacitor
         } else if (element.type == "capacitor") {
-            voltages.push(current => -element.current_idt / element.capacitance * Math.sign(node.id));
+            function voltage(current) {
+                const stored_charge = element.current_idt;
+                const relative_current = current * Math.sign(node.id);
+                const next_stored_charge = stored_charge + (relative_current * dt);
+                const relative_voltage = next_stored_charge / element.capacitance;
+                const absolute_voltage = relative_voltage * node.id;
+                return absolute_voltage;
+            }
+            voltages.push(voltage);
 
         // Inductor
         } else if (element.type == "inductor") {
             let other_derivatives = 0;
-            for (const other_circuit_id of element.circuits_id) {
-                const other_circuit = other_circuit_id[0];
-                const other_id = other_circuit_id[1];
-                if (circuit == other_circuit) continue;
-                other_derivatives += other_circuit.current_ddt * Math.sign(other_id);
+            // for (const other_circuit_id of element.circuits_id) {
+            //     const other_circuit = other_circuit_id[0];
+            //     const other_id = other_circuit_id[1];
+            //     if (circuit == other_circuit) continue;
+            //     other_derivatives += other_circuit.current_ddt * Math.sign(other_id);
+            // }
+            function voltage(current) {
+                const absolute_derivative = (current - last_current) / dt;
+                const relative_derivative = absolute_derivative * Math.sign(node.id);
+                const relative_voltage = relative_derivative * element.inductance;
+                const absolute_voltage = relative_voltage * Math.sign(node.id); 
+                return absolute_voltage;
             }
-            voltages.push(current => (other_derivatives + ((current - last_current)/dt)) * element.inductance * Math.sign(node.id));
+            voltages.push(voltage);
 
         // Switch
         } else if (element.type == 'switch') {
@@ -155,6 +175,7 @@ function findCurrent(circuit) {
     if (loop_voltage(1) == 0 && loop_voltage(0) == 0) return 0;
 
     const slope = loop_voltage(1) - loop_voltage(0)
+    console.log(loop_voltage(1), loop_voltage(0));
     const current = -loop_voltage(0) / slope;
     
     return current;
@@ -176,10 +197,11 @@ function updateElements(circuits) {
             const element = node.parent;
             if (element.type == 'resistor') {
                 element.current += circuit.current * Math.sign(node.id);
+                console.log(element.current);
             } else if (element.type == 'inductor') {
                 element.current_ddt += circuit.current_ddt * Math.sign(node.id);
             } else if (element.type == 'capacitor') {
-                element.current_idt += circuit.current * dt * Math.sin(node.id);
+                element.current_idt += circuit.current * dt * Math.sign(node.id);
             }
         }
     }
