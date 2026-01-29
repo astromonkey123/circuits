@@ -5,6 +5,10 @@ import { Node } from '../components/Node.js';
 
 import { simContainer, graphContainer, dt } from '../app.js';
 
+// TODO:
+//      Math errors (LC circuits lose energy)
+//      Ensure correct behavior in parallel circuits when elements are flipped
+
 function simulatePeriodic() {
     const all_circuits = findCircuits(simContainer.elements); // All existing circuits
     const circuits = checkCircuits(simContainer.circuits, all_circuits); // Filtered for duplicates, priority to preexisting
@@ -99,7 +103,6 @@ function updateMembership() {
 
 function findCurrent(circuit) {
     const last_current = circuit.current;
-    const last_integral = circuit.current_idt;
 
     const voltages = [];
     for (const node of circuit.nodes) {
@@ -127,9 +130,7 @@ function findCurrent(circuit) {
         } else if (element.type == "capacitor") {
             function voltage(current) {
                 const stored_charge = element.current_idt;
-                const relative_current = current * Math.sign(node.id);
-                const next_stored_charge = stored_charge + (relative_current * dt);
-                const relative_voltage = next_stored_charge / element.capacitance;
+                const relative_voltage = stored_charge / element.capacitance;
                 const absolute_voltage = relative_voltage * node.id;
                 return absolute_voltage;
             }
@@ -146,7 +147,7 @@ function findCurrent(circuit) {
                 const absolute_derivative = (current - last_current) / dt;
                 const relative_derivative = absolute_derivative * Math.sign(node.id);
                 const relative_voltage = relative_derivative * element.inductance;
-                const absolute_voltage = relative_voltage * Math.sign(node.id); 
+                const absolute_voltage = other_derivatives + relative_voltage * Math.sign(node.id); 
                 return absolute_voltage;
             }
             voltages.push(voltage);

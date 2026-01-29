@@ -44,16 +44,8 @@ class Node {
         ctx.save();
         ctx.translate(this.x, this.y);
         if (this.nodes.length > 0) {
-            if (this.id > 0) {
-                ctx.fillStyle = "red";
-                ctx.strokeStyle = "red";
-            } else if (this.id < 0) {
-                ctx.fillStyle = "blue";
-                ctx.strokeStyle = "blue";
-            } else {
-                ctx.fillStyle = light;
-                ctx.strokeStyle = light;
-            }
+            ctx.fillStyle = light;
+            ctx.strokeStyle = light;
         } else {
             ctx.fillStyle = highlight;
             ctx.strokeStyle = highlight;

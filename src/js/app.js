@@ -327,4 +327,4 @@ function showInputBox(element) {
     }
 }
 
-setInterval(appPeriodic, 100);
+setInterval(appPeriodic, 10);
