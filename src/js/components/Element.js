@@ -13,7 +13,6 @@ class Element {
         this.node1 = new Node(x + (Math.cos(this.rotation) * this.width/2), y + (Math.sin(this.rotation) * this.width/2), this, -1)     
         this.nodes = [this.node0, this.node1];
         this.circuits = [];
-        this.circuits_id = [];
     }
 
     containsPoint(x, y) {

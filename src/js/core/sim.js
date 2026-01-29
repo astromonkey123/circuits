@@ -9,7 +9,6 @@ function simulatePeriodic() {
     const all_circuits = findCircuits(simContainer.elements); // All existing circuits
     const circuits = checkCircuits(simContainer.circuits, all_circuits); // Filtered for duplicates, priority to preexisting
     simContainer.circuits = circuits;
-    console.log(simContainer.circuits);
     
     updateMembership(); // Update the list of circuits for each element
 
@@ -90,12 +89,10 @@ function checkCircuits(existing_circuits, all_circuits) {
 function updateMembership() {
     for (const element of simContainer.elements) {
         element.circuits = [];
-        element.circuits_id = [];
     }
     for (const circuit of simContainer.circuits) {
-        for (const element_id of circuit.elements_id) {
-            element_id[0].circuits.push(circuit);
-            element_id[0].circuits_id.push([circuit, element_id[1]]);
+        for (const element of circuit.elements) {
+            element.circuits.push(circuit);
         }
     }
 }
@@ -114,17 +111,15 @@ function findCurrent(circuit) {
         // Resistor
         } else if (element.type == "resistor") {
             let other_currents = 0;
-            // for (const other_circuit_id of element.circuits_id) {
-            //     const other_circuit = other_circuit_id[0];
-            //     const other_id = other_circuit_id[1];
-            //     if (circuit == other_circuit) continue;
-            //     other_currents += -other_circuit.current * Math.sign(other_id);
-            // }
+            for (const other_circuit of element.circuits) {
+                if (circuit == other_circuit) continue;
+                other_currents += other_circuit.current; 
+            }
             function voltage(current) {
                 const relative_current = current * Math.sign(node.id);
                 const relative_voltage = relative_current * element.resistance;
                 const absolute_voltage = relative_voltage * Math.sign(node.id);
-                return absolute_voltage
+                return absolute_voltage - (other_currents * element.resistance);
             }
             voltages.push(voltage);
 
@@ -143,12 +138,10 @@ function findCurrent(circuit) {
         // Inductor
         } else if (element.type == "inductor") {
             let other_derivatives = 0;
-            // for (const other_circuit_id of element.circuits_id) {
-            //     const other_circuit = other_circuit_id[0];
-            //     const other_id = other_circuit_id[1];
-            //     if (circuit == other_circuit) continue;
-            //     other_derivatives += other_circuit.current_ddt * Math.sign(other_id);
-            // }
+            for (const other_circuit of element.circuits) {
+                if (circuit == other_circuit) continue;
+                other_derivatives += other_circuit.current_ddt;
+            }
             function voltage(current) {
                 const absolute_derivative = (current - last_current) / dt;
                 const relative_derivative = absolute_derivative * Math.sign(node.id);
@@ -175,7 +168,6 @@ function findCurrent(circuit) {
     if (loop_voltage(1) == 0 && loop_voltage(0) == 0) return 0;
 
     const slope = loop_voltage(1) - loop_voltage(0)
-    console.log(loop_voltage(1), loop_voltage(0));
     const current = -loop_voltage(0) / slope;
     
     return current;
@@ -197,7 +189,6 @@ function updateElements(circuits) {
             const element = node.parent;
             if (element.type == 'resistor') {
                 element.current += circuit.current * Math.sign(node.id);
-                console.log(element.current);
             } else if (element.type == 'inductor') {
                 element.current_ddt += circuit.current_ddt * Math.sign(node.id);
             } else if (element.type == 'capacitor') {

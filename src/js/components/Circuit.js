@@ -4,10 +4,8 @@ class Circuit {
     constructor(nodes) {
         this.nodes = nodes;
         this.elements = [];
-        this.elements_id = [];
         for (const node of nodes) {
             this.elements.push(node.parent);
-            this.elements_id.push([node.parent, node.id]);
         }
         this.current = 0;
         this.current_idt = 0;
