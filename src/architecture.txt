@@ -34,3 +34,8 @@ V_actual = V_proper * 1
 And for a negatively oriented capacitor
 V_proper = (stored_charge + current * -1 * dt) / capacitance
 V_actual = V_proper * -1
+
+All of this is linear tho so it literally should make no difference at all what am I doing!
+Oh well I suppose it matters only for the capacitor and battery where direction has some meaning
+And also it mediates the interaction between circuits that might not flow in the same direction
+So actually this its probably fine

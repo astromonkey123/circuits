@@ -6,7 +6,6 @@ import { Node } from '../components/Node.js';
 import { simContainer, graphContainer, dt } from '../app.js';
 
 // TODO:
-//      Math errors (LC circuits lose energy)
 //      Ensure correct behavior in parallel circuits when elements are flipped
 
 function simulatePeriodic() {
